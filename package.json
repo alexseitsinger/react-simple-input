@@ -1,6 +1,6 @@
 {
   "name": "@alexseitsinger/react-simple-text-input",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A simple text input with a toggled error message.",
   "main": "dist/main.js",
   "homepage": "https://www.alexseitsinger.com/packages/node/react-simple-text-input",

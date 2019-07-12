@@ -1,3 +1,7 @@
+<a name="v0.1.1"></a>
+## [v0.1.1](https://github.com/alexseitsinger/react-simple-text-input/compare/v0.1.0...v0.1.1) (2019-07-12)
+
+
 <a name="v0.1.0"></a>
 ## [v0.1.0](https://github.com/alexseitsinger/react-simple-text-input/compare/070de5e9d5f05b1eb9449a6daec2c4a92e780c6d...v0.1.0) (2019-07-12)
 

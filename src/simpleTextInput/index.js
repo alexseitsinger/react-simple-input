@@ -4,7 +4,6 @@ import FormFieldError from "@alexseitsinger/form-field-error"
 
 import { Container, Input } from "./elements"
 
-
 /**
  * An input that has a built in error message.
  *

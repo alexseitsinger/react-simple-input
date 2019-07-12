@@ -19,6 +19,33 @@ An input that has a built in error message.
     -   `props.placeholder` **[string][4]** The placeholder text to use.
     -   `props.inputStyle` **[object][1]** The inline style to use on the input element.
 
+### Examples
+
+```javascript
+import React from "react"
+import { SimpleTextInput } from "@alexseitsinger/react-simple-text-input"
+
+function App({ onSubmit }) {
+  return (
+    <Form onSubmit={onSubmit}>
+      <SimpleTextInput
+        value={inputValue}
+        setValue={setInputValue}
+        isEmpty={isInputEmpty}
+        setEmpty={setInputEmpty}
+        isSubmitted={isSubmitted}
+        setSubmitted={setSubmitted}
+        placeholder={"Input..."}
+        errorMessage={"The input is empty."}
+        errorPosition={"centerLeft"}
+        errorStyle={{width: "100%", height: "100%"}}
+        inputStyle={{backgroundColor: "#FFFFFF", padding: "0.333em"}}
+      />
+    </Form>
+  )
+}
+```
+
 Returns **[function][3]** A controller stateless functional component.
 
 [1]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object

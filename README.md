@@ -25,7 +25,7 @@ An input that has a built in error message.
 import React from "react"
 import { SimpleTextInput } from "@alexseitsinger/react-simple-text-input"
 
-function App({ onSubmit }) {
+function App({ ... }) {
   return (
     <Form onSubmit={onSubmit}>
       <SimpleTextInput

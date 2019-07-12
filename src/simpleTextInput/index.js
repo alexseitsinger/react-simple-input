@@ -31,6 +31,30 @@ import { Container, Input } from "./elements"
  * @param {object} props.inputStyle
  * The inline style to use on the input element.
  *
+ * @example
+ * import React from "react"
+ * import { SimpleTextInput } from "@alexseitsinger/react-simple-text-input"
+ *
+ * function App({ onSubmit }) {
+ *   return (
+ *     <Form onSubmit={onSubmit}>
+ *       <SimpleTextInput
+ *         value={inputValue}
+ *         setValue={setInputValue}
+ *         isEmpty={isInputEmpty}
+ *         setEmpty={setInputEmpty}
+ *         isSubmitted={isSubmitted}
+ *         setSubmitted={setSubmitted}
+ *         placeholder={"Input..."}
+ *         errorMessage={"The input is empty."}
+ *         errorPosition={"centerLeft"}
+ *         errorStyle={{width: "100%", height: "100%"}}
+ *         inputStyle={{backgroundColor: "#FFFFFF", padding: "0.333em"}}
+ *       />
+ *     </Form>
+ *   )
+ * }
+ *
  * @return {function} A controller stateless functional component.
  */
 export function SimpleTextInput({

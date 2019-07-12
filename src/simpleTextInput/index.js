@@ -35,7 +35,7 @@ import { Container, Input } from "./elements"
  * import React from "react"
  * import { SimpleTextInput } from "@alexseitsinger/react-simple-text-input"
  *
- * function App({ onSubmit }) {
+ * function App({ ... }) {
  *   return (
  *     <Form onSubmit={onSubmit}>
  *       <SimpleTextInput

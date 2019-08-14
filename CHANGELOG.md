@@ -1,3 +1,10 @@
+<a name="v1.0.0"></a>
+## [v1.0.0](https://github.com/alexseitsinger/react-simple-text-input/compare/v0.1.1...v1.0.0) (2019-08-14)
+
+### Code Refactoring
+- Renames package/component. ([0bf97b4](https://github.com/alexseitsinger/react-simple-text-input/commit/0bf97b41bff604207c6fc1d822d32e4981cdeb9e))
+
+
 <a name="v0.1.1"></a>
 ## [v0.1.1](https://github.com/alexseitsinger/react-simple-text-input/compare/v0.1.0...v0.1.1) (2019-07-12)
 

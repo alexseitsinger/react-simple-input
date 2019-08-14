@@ -1,3 +1,3 @@
 import "core-js/stable"
 
-export { SimpleTextInput } from "./simpleTextInput"
+export { SimpleInput } from "./simpleInput"

@@ -105,20 +105,6 @@ export class SimpleInput extends React.PureComponent {
       setInputEmpty(true)
     }
   }
-  handleFocusInput = (event) => {
-    const {
-      isFormSubmitted,
-      setFormSubmitted,
-      setInputValue,
-    } = this.props
-
-    if (isFormSubmitted === true) {
-      setFormSubmitted(false)
-    }
-
-    const value = event.target.value || ""
-    setInputValue(value)
-  }
   handleBlurInput = (event) => {
     const {
       isFormSubmitted,
@@ -172,7 +158,6 @@ export class SimpleInput extends React.PureComponent {
           style={inputStyle}
           defaultValue={inputValue}
           placeholder={inputPlaceholder}
-          onFocus={this.handleFocusInput}
           onChange={this.handleChangeInput}
           onBlur={this.handleBlurInput}
         />

@@ -1,3 +1,10 @@
+<a name="v1.0.3"></a>
+## [v1.0.3](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.2...v1.0.3) (2019-08-15)
+
+### Bug Fixes
+- Fixes onchange. ([52e6cb7](https://github.com/alexseitsinger/react-simple-input/commit/52e6cb71110ea96d6b82fccc8e8f5cede9003aa9))
+
+
 <a name="v1.0.2"></a>
 ## [v1.0.2](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.1...v1.0.2) (2019-08-15)
 

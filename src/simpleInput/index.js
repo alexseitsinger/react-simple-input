@@ -98,12 +98,10 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
-    if (value.length) {
-      if(isInputEmpty) {
-        setInputEmpty(false)
-      }
+    if (value.length && isInputEmpty === true) {
+      setInputEmpty(false)
     }
-    else {
+    else if (isInputEmpty === false){
       setInputEmpty(true)
     }
   }
@@ -119,7 +117,7 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
-    if(value.length) {
+    if (value.length) {
       setInputValue(value)
     }
   }

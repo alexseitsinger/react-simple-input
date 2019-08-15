@@ -1,3 +1,10 @@
+<a name="v1.0.2"></a>
+## [v1.0.2](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.1...v1.0.2) (2019-08-15)
+
+### Bug Fixes
+- Changes if statement. ([86e6dac](https://github.com/alexseitsinger/react-simple-input/commit/86e6dacdd10eca4f9950d9fecb1d22744f83032f))
+
+
 <a name="v1.0.1"></a>
 ## [v1.0.1](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.0...v1.0.1) (2019-08-15)
 

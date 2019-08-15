@@ -1,6 +1,6 @@
 {
   "name": "@alexseitsinger/react-simple-input",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple input with a toggled error message.",
   "main": "dist/main.js",
   "homepage": "https://github.com/alexseitsinger/react-simple-input",

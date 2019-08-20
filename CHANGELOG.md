@@ -1,3 +1,10 @@
+<a name="v1.0.5"></a>
+## [v1.0.5](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.4...v1.0.5) (2019-08-20)
+
+### Bug Fixes
+- Limits setInputEmpty to once. ([1acb383](https://github.com/alexseitsinger/react-simple-input/commit/1acb38365e5a0abb5b59597736f85a34cf7fcaee))
+
+
 <a name="v1.0.4"></a>
 ## [v1.0.4](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.3...v1.0.4) (2019-08-20)
 

@@ -101,8 +101,24 @@ export class SimpleInput extends React.PureComponent {
     if (value.length && isInputEmpty === true) {
       setInputEmpty(false)
     }
-    else if (isInputEmpty === false){
-      setInputEmpty(true)
+  }
+  handleFocusInput = (event) => {
+    const {
+      isFormSubmitted,
+      setFormSubmitted,
+      isInputEmpty,
+      setInputEmpty,
+    } = this.props
+
+    if (isFormSubmitted === true) {
+      setFormSubmitted(false)
+    }
+
+    const value = event.target.value
+    if (!(value.length)) {
+      if(isInputEmpty === false) {
+        setInputEmpty(true)
+      }
     }
   }
   handleBlurInput = (event) => {
@@ -110,6 +126,7 @@ export class SimpleInput extends React.PureComponent {
       isFormSubmitted,
       setFormSubmitted,
       setInputValue,
+      setInputEmpty,
     } = this.props
 
     if (isFormSubmitted === true) {
@@ -119,6 +136,9 @@ export class SimpleInput extends React.PureComponent {
     const value = event.target.value
     if (value.length) {
       setInputValue(value)
+    }
+    else {
+      setInputEmpty(true)
     }
   }
   handleClickError = (event) => {
@@ -160,6 +180,7 @@ export class SimpleInput extends React.PureComponent {
           placeholder={inputPlaceholder}
           onChange={this.handleChangeInput}
           onBlur={this.handleBlurInput}
+          onFocus={this.handleFocusInput}
         />
       </Container>
     )

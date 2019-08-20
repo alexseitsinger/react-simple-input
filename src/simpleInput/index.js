@@ -115,8 +115,13 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
-    if (!(value.length)) {
-      if(isInputEmpty === false) {
+    if (value.length) {
+      if (isInputEmpty === true) {
+        setInputEmpty(false)
+      }
+    }
+    else {
+      if (isInputEmpty === false) {
         setInputEmpty(true)
       }
     }
@@ -126,6 +131,7 @@ export class SimpleInput extends React.PureComponent {
       isFormSubmitted,
       setFormSubmitted,
       setInputValue,
+      isInputEmpty,
       setInputEmpty,
     } = this.props
 
@@ -135,10 +141,16 @@ export class SimpleInput extends React.PureComponent {
 
     const value = event.target.value
     if (value.length) {
+      if (isInputEmpty === true) {
+        setInputEmpty(false)
+      }
+
       setInputValue(value)
     }
     else {
-      setInputEmpty(true)
+      if(isInputEmpty === false) {
+        setInputEmpty(true)
+      }
     }
   }
   handleClickError = (event) => {

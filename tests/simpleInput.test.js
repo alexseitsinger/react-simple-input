@@ -28,6 +28,9 @@ function setup(extraProps) {
   )
 }
 
+// TODO: Test the frequenmcy of setInputEmpty callback in onChange, onBlur,
+// onFocus, etc.
+
 describe("<SimpleInput />", () => {
   it("Renders with all correct props", () => {
     const wrapper = setup({

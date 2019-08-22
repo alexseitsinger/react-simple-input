@@ -77,7 +77,12 @@ export class SimpleInput extends React.PureComponent {
     setInputEmpty: PropTypes.func.isRequired,
     inputType: PropTypes.string,
     containerStyle: PropTypes.object,
+    inputName: PropTypes.string,
+    setValueValid: PropTypes.func.isRequired,
+    validateValue: PropTypes.func.isRequired,
+    isValueValid: PropTypes.bool.isRequired,
   }
+
   static defaultProps = {
     inputPlaceholder: "",
     inputType: "text",
@@ -85,12 +90,20 @@ export class SimpleInput extends React.PureComponent {
     errorStyle: {},
     containerStyle: {},
   }
+
+  inputRef = React.createRef()
+
   handleChangeInput = (event) => {
     const {
       isFormSubmitted,
       setFormSubmitted,
+
       isInputEmpty,
       setInputEmpty,
+
+      validateValue,
+      isValueValid,
+      setValueValid,
     } = this.props
 
     if(isFormSubmitted === true) {
@@ -98,16 +111,30 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
-    if (value.length && isInputEmpty === true) {
-      setInputEmpty(false)
+
+    const isValid = this.validateValue(value)
+    if (isValueValid !== isValid) {
+      setValueValid(isValid)
+    }
+
+    if (value.length) {
+      if (isInputEmpty === true) {
+        setInputEmpty(false)
+      }
     }
   }
+
   handleFocusInput = (event) => {
     const {
       isFormSubmitted,
       setFormSubmitted,
+
       isInputEmpty,
       setInputEmpty,
+
+      validateValue,
+      isValueValid,
+      setValueValid,
     } = this.props
 
     if (isFormSubmitted === true) {
@@ -115,6 +142,12 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
+
+    const isValid = this.validateValue(value)
+    if (isValueValid !== isValid) {
+      setValueValid(isValid)
+    }
+
     if (value.length) {
       if (isInputEmpty === true) {
         setInputEmpty(false)
@@ -130,9 +163,15 @@ export class SimpleInput extends React.PureComponent {
     const {
       isFormSubmitted,
       setFormSubmitted,
+
       setInputValue,
+
       isInputEmpty,
       setInputEmpty,
+
+      validateValue,
+      isValueValid,
+      setValueValid,
     } = this.props
 
     if (isFormSubmitted === true) {
@@ -140,6 +179,13 @@ export class SimpleInput extends React.PureComponent {
     }
 
     const value = event.target.value
+
+    const isValid = this.validateValue(value)
+    if (isValueValid !== isValid) {
+      setValueValid(isValid)
+    }
+
+    // Set the input value and its status.
     if (value.length) {
       if (isInputEmpty === true) {
         setInputEmpty(false)
@@ -153,6 +199,7 @@ export class SimpleInput extends React.PureComponent {
       }
     }
   }
+
   handleClickError = (event) => {
     const {
       setFormSubmitted,
@@ -160,6 +207,7 @@ export class SimpleInput extends React.PureComponent {
 
     setFormSubmitted(false)
   }
+
   render() {
     const {
       isFormSubmitted,
@@ -172,9 +220,12 @@ export class SimpleInput extends React.PureComponent {
       inputValue,
       inputPlaceholder,
       inputType,
+      inputName,
+      isValueValid,
     } = this.props
 
-    const isErrorVisible = Boolean(isFormSubmitted && isInputEmpty)
+    const hasError = Boolean(isValueValid === false || isInputEmpty === true)
+    const isErrorVisible = Boolean(hasError === true && isFormSubmitted === true)
 
     return (
       <Container style={containerStyle}>
@@ -186,6 +237,8 @@ export class SimpleInput extends React.PureComponent {
           containerStyle={errorStyle}
         />
         <Input
+          ref={this.inputRef}
+          name={inputName}
           type={inputType}
           style={inputStyle}
           defaultValue={inputValue}

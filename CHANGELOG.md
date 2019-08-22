@@ -1,3 +1,10 @@
+<a name="v1.1.0"></a>
+## [v1.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.5...v1.1.0) (2019-08-22)
+
+### Features
+- Adds validator method to callbacks. ([8830b2f](https://github.com/alexseitsinger/react-simple-input/commit/8830b2fb597fe47075a6bf3632deeb5c54bb6135))
+
+
 <a name="v1.0.5"></a>
 ## [v1.0.5](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.4...v1.0.5) (2019-08-20)
 

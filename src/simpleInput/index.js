@@ -101,7 +101,6 @@ export class SimpleInput extends React.PureComponent {
       isInputEmpty,
       setInputEmpty,
 
-      validateValue,
       isValueValid,
       setValueValid,
     } = this.props
@@ -112,7 +111,7 @@ export class SimpleInput extends React.PureComponent {
 
     const value = event.target.value
 
-    const isValid = this.validateValue(value)
+    const isValid = this.handleValidate(value)
     if (isValueValid !== isValid) {
       setValueValid(isValid)
     }
@@ -132,7 +131,6 @@ export class SimpleInput extends React.PureComponent {
       isInputEmpty,
       setInputEmpty,
 
-      validateValue,
       isValueValid,
       setValueValid,
     } = this.props
@@ -143,7 +141,7 @@ export class SimpleInput extends React.PureComponent {
 
     const value = event.target.value
 
-    const isValid = this.validateValue(value)
+    const isValid = this.handleValidate(value)
     if (isValueValid !== isValid) {
       setValueValid(isValid)
     }
@@ -159,6 +157,12 @@ export class SimpleInput extends React.PureComponent {
       }
     }
   }
+
+  handleValidate = (value) => {
+    const { validateValue } = this.props
+    return validateValue(value)
+  }
+
   handleBlurInput = (event) => {
     const {
       isFormSubmitted,
@@ -169,7 +173,6 @@ export class SimpleInput extends React.PureComponent {
       isInputEmpty,
       setInputEmpty,
 
-      validateValue,
       isValueValid,
       setValueValid,
     } = this.props
@@ -180,7 +183,7 @@ export class SimpleInput extends React.PureComponent {
 
     const value = event.target.value
 
-    const isValid = this.validateValue(value)
+    const isValid = this.handleValidate(value)
     if (isValueValid !== isValid) {
       setValueValid(isValid)
     }

@@ -67,7 +67,7 @@ export class SimpleInput extends React.PureComponent {
     isFormSubmitted: PropTypes.bool.isRequired,
     setFormSubmitted: PropTypes.func.isRequired,
     errorMessage: PropTypes.string.isRequired,
-    errorPosition: PropTypes.string.isRequired,
+    errorPosition: PropTypes.string,
     errorStyle: PropTypes.object,
     inputStyle: PropTypes.object,
     inputPlaceholder: PropTypes.string,
@@ -76,85 +76,109 @@ export class SimpleInput extends React.PureComponent {
     isInputEmpty: PropTypes.bool.isRequired,
     setInputEmpty: PropTypes.func.isRequired,
     inputType: PropTypes.string,
-    containerStyle: PropTypes.object,
     inputName: PropTypes.string,
-    setValueValid: PropTypes.func.isRequired,
-    validateValue: PropTypes.func.isRequired,
-    isValueValid: PropTypes.bool.isRequired,
+    containerStyle: PropTypes.object,
+    setValueValid: PropTypes.func,
+    validateValue: PropTypes.func,
+    isValueValid: PropTypes.bool,
   }
 
   static defaultProps = {
     inputPlaceholder: "",
     inputType: "text",
     inputStyle: {},
+    inputName: "",
     errorStyle: {},
+    errorPosition: "centerLeft",
     containerStyle: {},
+    validateValue: () => {},
+    isValueValid: true,
+    setValueValid: () => {},
   }
 
   inputRef = React.createRef()
 
-  handleChangeInput = (event) => {
-    const {
-      isFormSubmitted,
-      setFormSubmitted,
-
-      isInputEmpty,
-      setInputEmpty,
-
-      isValueValid,
-      setValueValid,
-    } = this.props
-
-    if(isFormSubmitted === true) {
-      setFormSubmitted(false)
+  getValue = () => {
+    const current = this.inputRef.current
+    if(!( current )) {
+      return
     }
-
-    const value = event.target.value
-
-    const isValid = this.handleValidate(value)
-    if (isValueValid !== isValid) {
-      setValueValid(isValid)
-    }
-
-    if (value.length) {
-      if (isInputEmpty === true) {
-        setInputEmpty(false)
+    switch (current.type) {
+      default: {
+        return current.value
+      }
+      case "text":
+      case "number":
+      case "tel":
+      case "email":
+      case "password": {
+        return current.value
+      }
+      case "file": {
+        return current.files
       }
     }
   }
 
-  handleFocusInput = (event) => {
-    const {
-      isFormSubmitted,
-      setFormSubmitted,
+  handleChangeInput = (event) => {
+    this.handleSetFormSubmitted(false)
 
-      isInputEmpty,
-      setInputEmpty,
-
-      isValueValid,
-      setValueValid,
-    } = this.props
-
-    if (isFormSubmitted === true) {
-      setFormSubmitted(false)
-    }
-
-    const value = event.target.value
-
-    const isValid = this.handleValidate(value)
-    if (isValueValid !== isValid) {
-      setValueValid(isValid)
-    }
+    const value = this.getValue()
 
     if (value.length) {
-      if (isInputEmpty === true) {
-        setInputEmpty(false)
-      }
+      this.handleSetValueValid(this.handleValidate(value))
+      this.handleSetInputEmpty(false)
     }
     else {
-      if (isInputEmpty === false) {
-        setInputEmpty(true)
-      }
+      this.handleSetValueValid(false)
+      this.handleSetInputEmpty(true)
+    }
+  }
+
+  handleFocusInput = (event) => {
+    this.handleSetFormSubmitted(false)
+
+    const value = this.getValue()
+
+    if (value.length) {
+      this.handleSetValueValid(this.handleValidate(value))
+      this.handleSetInputEmpty(false)
+    }
+    else {
+      this.handleSetValueValid(false)
+      this.handleSetInputEmpty(true)
+    }
+  }
+
+  handleSetValueValid = bool => {
+    const { isValueValid, setValueValid } = this.props
+
+    if (isValueValid !== bool) {
+      setValueValid(bool)
+    }
+  }
+
+  handleSetInputEmpty = bool => {
+    const { isInputEmpty, setInputEmpty } = this.props
+
+    if (isInputEmpty !== bool) {
+      setInputEmpty(bool)
+    }
+  }
+
+  handleSetInputValue = value => {
+    const { inputValue, setInputValue } = this.props
+
+    if (inputValue !== value) {
+      setInputValue(value)
+    }
+  }
+
+  handleSetFormSubmitted = bool => {
+    const { isFormSubmitted, setFormSubmitted } = this.props
+
+    if (isFormSubmitted !== bool) {
+      setFormSubmitted(bool)
     }
   }
 
@@ -164,51 +188,23 @@ export class SimpleInput extends React.PureComponent {
   }
 
   handleBlurInput = (event) => {
-    const {
-      isFormSubmitted,
-      setFormSubmitted,
+    this.handleSetFormSubmitted(false)
 
-      setInputValue,
+    const value = this.getValue()
 
-      isInputEmpty,
-      setInputEmpty,
-
-      isValueValid,
-      setValueValid,
-    } = this.props
-
-    if (isFormSubmitted === true) {
-      setFormSubmitted(false)
-    }
-
-    const value = event.target.value
-
-    const isValid = this.handleValidate(value)
-    if (isValueValid !== isValid) {
-      setValueValid(isValid)
-    }
-
-    // Set the input value and its status.
     if (value.length) {
-      if (isInputEmpty === true) {
-        setInputEmpty(false)
-      }
-
-      setInputValue(value)
+      this.handleSetValueValid(this.handleValidate(value))
+      this.handleSetInputEmpty(false)
+      this.handleSetInputValue(value)
     }
     else {
-      if(isInputEmpty === false) {
-        setInputEmpty(true)
-      }
+      this.handleSetValueValid(false)
+      this.handleSetInputEmpty(true)
     }
   }
 
   handleClickError = (event) => {
-    const {
-      setFormSubmitted,
-    } = this.props
-
-    setFormSubmitted(false)
+    this.handleSetFormSubmitted(false)
   }
 
   render() {
@@ -227,8 +223,8 @@ export class SimpleInput extends React.PureComponent {
       isValueValid,
     } = this.props
 
-    const hasError = Boolean(isValueValid === false || isInputEmpty === true)
-    const isErrorVisible = Boolean(hasError === true && isFormSubmitted === true)
+    const hasError = Boolean(!isValueValid || isInputEmpty)
+    const isErrorVisible = Boolean(isFormSubmitted && hasError)
 
     return (
       <Container style={containerStyle}>

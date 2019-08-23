@@ -1,3 +1,10 @@
+<a name="v1.2.0"></a>
+## [v1.2.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.1.1...v1.2.0) (2019-08-23)
+
+### Features
+- Updates component. ([5a527e7](https://github.com/alexseitsinger/react-simple-input/commit/5a527e7a3d9315d69a43d1b822ff127aee7b40a2))
+
+
 <a name="v1.1.1"></a>
 ## [v1.1.1](https://github.com/alexseitsinger/react-simple-input/compare/v1.1.0...v1.1.1) (2019-08-23)
 

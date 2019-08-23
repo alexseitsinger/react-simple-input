@@ -1,3 +1,10 @@
+<a name="v1.1.1"></a>
+## [v1.1.1](https://github.com/alexseitsinger/react-simple-input/compare/v1.1.0...v1.1.1) (2019-08-23)
+
+### Bug Fixes
+- Fixes validator. ([0af35af](https://github.com/alexseitsinger/react-simple-input/commit/0af35af5f9d37f543c4b0e6c06cb2d13bae629cb))
+
+
 <a name="v1.1.0"></a>
 ## [v1.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.0.5...v1.1.0) (2019-08-22)
 

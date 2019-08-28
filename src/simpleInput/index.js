@@ -96,7 +96,11 @@ export class SimpleInput extends React.PureComponent {
     setValueValid: () => {},
   }
 
-  inputRef = React.createRef()
+  constructor(props) {
+    super(props)
+
+    this.inputRef = React.createRef()
+  }
 
   getValue = () => {
     const current = this.inputRef.current

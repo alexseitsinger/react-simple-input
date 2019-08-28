@@ -96,12 +96,6 @@ export class SimpleInput extends React.PureComponent {
     setValueValid: () => {},
   }
 
-  constructor(props) {
-    super(props)
-
-    this.inputRef = React.createRef()
-  }
-
   getValue = (current) => {
     switch (current.type) {
       default: {
@@ -123,7 +117,7 @@ export class SimpleInput extends React.PureComponent {
   handleChangeInput = (event) => {
     this.handleSetFormSubmitted(false)
 
-    const value = getValue(event.target)
+    const value = this.getValue(event.target)
 
     if (value.length) {
       this.handleSetValueValid(this.handleValidate(value))
@@ -236,7 +230,6 @@ export class SimpleInput extends React.PureComponent {
           containerStyle={errorStyle}
         />
         <Input
-          ref={this.inputRef}
           name={inputName}
           type={inputType}
           style={inputStyle}

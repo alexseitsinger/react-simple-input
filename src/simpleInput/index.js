@@ -102,11 +102,7 @@ export class SimpleInput extends React.PureComponent {
     this.inputRef = React.createRef()
   }
 
-  getValue = () => {
-    const current = this.inputRef.current
-    if(!( current )) {
-      return
-    }
+  getValue = (current) => {
     switch (current.type) {
       default: {
         return current.value
@@ -127,7 +123,7 @@ export class SimpleInput extends React.PureComponent {
   handleChangeInput = (event) => {
     this.handleSetFormSubmitted(false)
 
-    const value = this.getValue()
+    const value = getValue(event.target)
 
     if (value.length) {
       this.handleSetValueValid(this.handleValidate(value))
@@ -142,7 +138,7 @@ export class SimpleInput extends React.PureComponent {
   handleFocusInput = (event) => {
     this.handleSetFormSubmitted(false)
 
-    const value = this.getValue()
+    const value = this.getValue(event.target)
 
     if (value.length) {
       this.handleSetValueValid(this.handleValidate(value))
@@ -194,7 +190,7 @@ export class SimpleInput extends React.PureComponent {
   handleBlurInput = (event) => {
     this.handleSetFormSubmitted(false)
 
-    const value = this.getValue()
+    const value = this.getValue(event.target)
 
     if (value.length) {
       this.handleSetValueValid(this.handleValidate(value))

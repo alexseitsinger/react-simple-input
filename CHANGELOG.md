@@ -1,3 +1,10 @@
+<a name="v1.2.1"></a>
+## [v1.2.1](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.0...v1.2.1) (2019-08-28)
+
+### Bug Fixes
+- Moves ref to constructor. ([62ee358](https://github.com/alexseitsinger/react-simple-input/commit/62ee3586f74531747bb3c4e4dfdce88a70a7dac6))
+
+
 <a name="v1.2.0"></a>
 ## [v1.2.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.1.1...v1.2.0) (2019-08-23)
 

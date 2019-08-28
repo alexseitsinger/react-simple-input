@@ -1,3 +1,10 @@
+<a name="v1.2.2"></a>
+## [v1.2.2](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.1...v1.2.2) (2019-08-28)
+
+### Bug Fixes
+- Gets value from dom element directly. ([7349166](https://github.com/alexseitsinger/react-simple-input/commit/734916690fb615231878688c7b7dd40607065aa8))
+
+
 <a name="v1.2.1"></a>
 ## [v1.2.1](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.0...v1.2.1) (2019-08-28)
 

@@ -1,3 +1,10 @@
+<a name="v1.2.3"></a>
+## [v1.2.3](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.2...v1.2.3) (2019-08-28)
+
+### Bug Fixes
+- Adds missing this. ([84a020f](https://github.com/alexseitsinger/react-simple-input/commit/84a020fb4d716fb12ff6d8829a618fe15ac9c435))
+
+
 <a name="v1.2.2"></a>
 ## [v1.2.2](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.1...v1.2.2) (2019-08-28)
 

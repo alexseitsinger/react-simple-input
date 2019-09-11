@@ -1,6 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import FormFieldError from "@alexseitsinger/form-field-error"
+import _ from "underscore"
 
 import { Container, Input } from "./elements"
 
@@ -152,7 +153,9 @@ export class SimpleInput extends React.PureComponent {
     const { isValueValid, setValueValid } = this.props
 
     if (isValueValid !== bool) {
-      setValueValid(bool)
+      if (_.isFunction(setValueValid)) {
+        setValueValid(bool)
+      }
     }
   }
 
@@ -160,7 +163,9 @@ export class SimpleInput extends React.PureComponent {
     const { isInputEmpty, setInputEmpty } = this.props
 
     if (isInputEmpty !== bool) {
-      setInputEmpty(bool)
+      if (_.isFunction(setInputEmpty)) {
+        setInputEmpty(bool)
+      }
     }
   }
 
@@ -168,7 +173,9 @@ export class SimpleInput extends React.PureComponent {
     const { inputValue, setInputValue } = this.props
 
     if (inputValue !== value) {
-      setInputValue(value)
+      if (_.isFunction(setInputValue)) {
+        setInputValue(value)
+      }
     }
   }
 
@@ -176,13 +183,17 @@ export class SimpleInput extends React.PureComponent {
     const { isFormSubmitted, setFormSubmitted } = this.props
 
     if (isFormSubmitted !== bool) {
-      setFormSubmitted(bool)
+      if (_.isFunction(setFormSubmitted)) {
+        setFormSubmitted(bool)
+      }
     }
   }
 
   handleValidate = (value) => {
     const { validateValue } = this.props
-    return validateValue(value)
+    if (_.isFunction(validateValue)) {
+      return validateValue(value)
+    }
   }
 
 

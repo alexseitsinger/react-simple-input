@@ -96,11 +96,10 @@ export class SimpleInput extends React.PureComponent {
     setValueValid: () => {},
   }
 
+  inputRef = React.createRef()
+
   getValue = (current) => {
     switch (current.type) {
-      default: {
-        return current.value
-      }
       case "text":
       case "number":
       case "tel":
@@ -114,7 +113,7 @@ export class SimpleInput extends React.PureComponent {
     }
   }
 
-  handleChangeInput = (event) => {
+  handleBlurInput = event => {
     this.handleSetFormSubmitted(false)
 
     const value = this.getValue(event.target)
@@ -122,6 +121,7 @@ export class SimpleInput extends React.PureComponent {
     if (value.length) {
       this.handleSetValueValid(this.handleValidate(value))
       this.handleSetInputEmpty(false)
+      this.handleSetInputValue(value)
     }
     else {
       this.handleSetValueValid(false)
@@ -129,7 +129,11 @@ export class SimpleInput extends React.PureComponent {
     }
   }
 
-  handleFocusInput = (event) => {
+  handleChangeInput = event => {
+    this.handleSetFormSubmitted(false)
+  }
+
+  handleFocusInput = event => {
     this.handleSetFormSubmitted(false)
 
     const value = this.getValue(event.target)
@@ -181,21 +185,6 @@ export class SimpleInput extends React.PureComponent {
     return validateValue(value)
   }
 
-  handleBlurInput = (event) => {
-    this.handleSetFormSubmitted(false)
-
-    const value = this.getValue(event.target)
-
-    if (value.length) {
-      this.handleSetValueValid(this.handleValidate(value))
-      this.handleSetInputEmpty(false)
-      this.handleSetInputValue(value)
-    }
-    else {
-      this.handleSetValueValid(false)
-      this.handleSetInputEmpty(true)
-    }
-  }
 
   handleClickError = (event) => {
     this.handleSetFormSubmitted(false)
@@ -230,6 +219,7 @@ export class SimpleInput extends React.PureComponent {
           containerStyle={errorStyle}
         />
         <Input
+          ref={this.inputRef}
           name={inputName}
           type={inputType}
           style={inputStyle}

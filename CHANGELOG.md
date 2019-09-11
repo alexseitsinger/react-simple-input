@@ -1,3 +1,10 @@
+<a name="v1.4.0"></a>
+## [v1.4.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.3.0...v1.4.0) (2019-09-11)
+
+### Features
+- Adds function check to handlers. ([b89e5b5](https://github.com/alexseitsinger/react-simple-input/commit/b89e5b5677d1fccaa16ced1b0bbd234da32c16fa))
+
+
 <a name="v1.3.0"></a>
 ## [v1.3.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.3...v1.3.0) (2019-09-11)
 

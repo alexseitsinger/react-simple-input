@@ -1,3 +1,11 @@
+<a name="v1.3.0"></a>
+## [v1.3.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.3...v1.3.0) (2019-09-11)
+
+### Features
+- Adds flex style. ([f4721cb](https://github.com/alexseitsinger/react-simple-input/commit/f4721cbb7218197fce3f35cf9ffd04e54ba09c23))
+- Adds inputRef. ([d1c8393](https://github.com/alexseitsinger/react-simple-input/commit/d1c8393e3a06b23a83b78be04b51eb1aa2a3bc10))
+
+
 <a name="v1.2.3"></a>
 ## [v1.2.3](https://github.com/alexseitsinger/react-simple-input/compare/v1.2.2...v1.2.3) (2019-08-28)
 

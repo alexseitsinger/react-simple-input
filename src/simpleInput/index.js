@@ -201,45 +201,80 @@ export class SimpleInput extends React.PureComponent {
     this.handleSetFormSubmitted(false)
   }
 
-  render() {
+  renderInput = () => {
     const {
-      isFormSubmitted,
-      isInputEmpty,
-      containerStyle,
-      errorPosition,
-      errorMessage,
-      errorStyle,
+      renderInput,
+      inputName,
+      inputType,
       inputStyle,
       inputValue,
       inputPlaceholder,
-      inputType,
-      inputName,
+    } = this.props
+
+    const renderedChild = (
+      <Input
+        ref={this.inputRef}
+        name={inputName}
+        type={inputType}
+        style={inputStyle}
+        defaultValue={inputValue}
+        placeholder={inputPlaceholder}
+        onChange={this.handleChangeInput}
+        onBlur={this.handleBlurInput}
+        onFocus={this.handleFocusInput}
+      />
+    )
+
+    if (_.isFunction(renderInput)) {
+      return renderInput(renderedChild)
+    }
+
+    return renderedChild
+  }
+
+  renderError = () => {
+    const {
       isValueValid,
+      isInputEmpty,
+      isFormSubmitted,
+      errorPosition,
+      errorMessage,
+      errorStyle,
+      renderError,
     } = this.props
 
     const hasError = Boolean(!isValueValid || isInputEmpty)
     const isErrorVisible = Boolean(isFormSubmitted && hasError)
 
+    const renderedChild = (
+      <FormFieldError
+        isVisible={isErrorVisible}
+        position={errorPosition}
+        onClick={this.handleClickError}
+        text={errorMessage}
+        containerStyle={errorStyle}
+      />
+    )
+
+    if (_.isFunction(renderError)) {
+      return renderError(renderedChild)
+    }
+
+    return renderedChild
+  }
+
+  render() {
+    const {
+      containerStyle
+    } = this.props
+
+    const renderedError = this.renderError()
+    const renderedInput = this.renderInput()
+
     return (
       <Container style={containerStyle}>
-        <FormFieldError
-          isVisible={isErrorVisible}
-          position={errorPosition}
-          onClick={this.handleClickError}
-          text={errorMessage}
-          containerStyle={errorStyle}
-        />
-        <Input
-          ref={this.inputRef}
-          name={inputName}
-          type={inputType}
-          style={inputStyle}
-          defaultValue={inputValue}
-          placeholder={inputPlaceholder}
-          onChange={this.handleChangeInput}
-          onBlur={this.handleBlurInput}
-          onFocus={this.handleFocusInput}
-        />
+        {renderedError}
+        {renderedInput}
       </Container>
     )
   }

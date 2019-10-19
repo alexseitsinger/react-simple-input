@@ -1,3 +1,11 @@
+<a name="v2.0.0"></a>
+## [v2.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.4.0...v2.0.0) (2019-10-19)
+
+### Features
+- Adds render method for each part of field. ([98b3f56](https://github.com/alexseitsinger/react-simple-input/commit/98b3f56ba857838e9e9fedf0d6772bd975830f84))
+- Auto-focuses after handler actions. ([ab0750d](https://github.com/alexseitsinger/react-simple-input/commit/ab0750d48225cd1d8686a01b33a12e3eb87bda38))
+
+
 <a name="v1.4.0"></a>
 ## [v1.4.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.3.0...v1.4.0) (2019-09-11)
 

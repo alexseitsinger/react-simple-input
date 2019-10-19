@@ -4,7 +4,12 @@ module.exports = {
       "useBuiltIns": "entry",
       "corejs": 3
     }],
-    "@babel/preset-react"
+    "@babel/preset-react",
+    ["@emotion/babel-preset-css-prop", {
+      autoLabel: true,
+      labelFormat: "[local]",
+      useBuiltIns: false,
+    }]
   ],
   plugins: [
     "@babel/plugin-proposal-export-namespace-from",

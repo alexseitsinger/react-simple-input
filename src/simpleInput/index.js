@@ -63,7 +63,7 @@ import { Container, Input } from "./elements"
  *
  * @return {function} A controller stateless functional component.
  */
-export class SimpleInput extends React.PureComponent {
+export class SimpleInput extends React.Component {
   static propTypes = {
     isFormSubmitted: PropTypes.bool.isRequired,
     setFormSubmitted: PropTypes.func.isRequired,
@@ -88,7 +88,7 @@ export class SimpleInput extends React.PureComponent {
     inputPlaceholder: "",
     inputType: "text",
     inputStyle: {},
-    inputName: "",
+    inputName: _.uniqueId(),
     errorStyle: {},
     errorPosition: "centerLeft",
     containerStyle: {},
@@ -120,7 +120,8 @@ export class SimpleInput extends React.PureComponent {
     const value = this.getValue(event.target)
 
     if (value.length) {
-      this.handleSetValueValid(this.handleValidate(value))
+      const isValid = this.handleValidate(value)
+      this.handleSetValueValid(isValid)
       this.handleSetInputEmpty(false)
       this.handleSetInputValue(value)
     }
@@ -135,56 +136,76 @@ export class SimpleInput extends React.PureComponent {
   }
 
   handleFocusInput = event => {
-    this.handleSetFormSubmitted(false)
-
+    const shouldFocus = true
     const value = this.getValue(event.target)
 
+    this.handleSetFormSubmitted(false, shouldFocus)
+
     if (value.length) {
-      this.handleSetValueValid(this.handleValidate(value))
-      this.handleSetInputEmpty(false)
+      const isValid = this.handleValidate(value)
+      this.handleSetValueValid(isValid, shouldFocus)
+      this.handleSetInputEmpty(false, shouldFocus)
     }
     else {
-      this.handleSetValueValid(false)
-      this.handleSetInputEmpty(true)
+      this.handleSetValueValid(false, shouldFocus)
+      this.handleSetInputEmpty(true, shouldFocus)
     }
   }
 
-  handleSetValueValid = bool => {
-    const { isValueValid, setValueValid } = this.props
+  componentDidMount() {
+    if (this.props.isFocused === true) {
+      this.inputRef.current.focus()
+    }
+  }
+
+  handleSetValueValid = (bool, shouldFocus) => {
+    const { isValueValid, setValueValid, setFocusedCurrent } = this.props
 
     if (isValueValid !== bool) {
       if (_.isFunction(setValueValid)) {
         setValueValid(bool)
+        if (shouldFocus === true) {
+          setFocusedCurrent()
+        }
       }
     }
   }
 
-  handleSetInputEmpty = bool => {
-    const { isInputEmpty, setInputEmpty } = this.props
+  handleSetInputEmpty = (bool, shouldFocus) => {
+    const { isInputEmpty, setInputEmpty, setFocusedCurrent } = this.props
 
     if (isInputEmpty !== bool) {
       if (_.isFunction(setInputEmpty)) {
         setInputEmpty(bool)
+        if (shouldFocus === true) {
+          setFocusedCurrent()
+        }
       }
     }
   }
 
-  handleSetInputValue = value => {
-    const { inputValue, setInputValue } = this.props
+  handleSetInputValue = (value, shouldFocus) => {
+    const { inputValue, setInputValue, setFocusedCurrent } = this.props
 
     if (inputValue !== value) {
       if (_.isFunction(setInputValue)) {
         setInputValue(value)
+        if (shouldFocus === true) {
+          setFocusedCurrent()
+        }
       }
     }
   }
 
-  handleSetFormSubmitted = bool => {
-    const { isFormSubmitted, setFormSubmitted } = this.props
+  handleSetFormSubmitted = (bool, shouldFocus) => {
+    const { isFormSubmitted, setFormSubmitted, setFocusedCurrent } = this.props
 
     if (isFormSubmitted !== bool) {
       if (_.isFunction(setFormSubmitted)) {
         setFormSubmitted(bool)
+        if (shouldFocus === true) {
+          setFocusedCurrent()
+        }
       }
     }
   }
@@ -211,12 +232,15 @@ export class SimpleInput extends React.PureComponent {
       inputPlaceholder,
     } = this.props
 
+    const key = `${inputType}_input_${inputName}`
+
     const renderedChild = (
       <Input
+        key={key}
         ref={this.inputRef}
         name={inputName}
         type={inputType}
-        style={inputStyle}
+        css={inputStyle}
         defaultValue={inputValue}
         placeholder={inputPlaceholder}
         onChange={this.handleChangeInput}
@@ -272,7 +296,7 @@ export class SimpleInput extends React.PureComponent {
     const renderedInput = this.renderInput()
 
     return (
-      <Container style={containerStyle}>
+      <Container css={containerStyle}>
         {renderedError}
         {renderedInput}
       </Container>

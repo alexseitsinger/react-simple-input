@@ -96,7 +96,7 @@ export class SimpleInput extends React.Component {
     onValidate: null,
     isValueValid: true,
     setValueValid: () => {},
-    sanitizeValue: value => value,
+    sanitizeValue: null,
     onSanitized: null,
     renderInput: null,
     renderError: null,

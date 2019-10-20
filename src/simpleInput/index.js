@@ -37,9 +37,6 @@ import { Container, Input } from "./elements"
  * The inline style to use for the container element.
  *
  * @example
- * import React from "react"
- * import { SimpleInput } from "@alexseitsinger/react-simple-input"
- *
  * function App({ ... }) {
  *   return (
  *     <Form onSubmit={onSubmit}>
@@ -60,8 +57,6 @@ import { Container, Input } from "./elements"
  *     </Form>
  *   )
  * }
- *
- * @return {function} A controller stateless functional component.
  */
 export class SimpleInput extends React.Component {
   static propTypes = {
@@ -80,8 +75,14 @@ export class SimpleInput extends React.Component {
     inputName: PropTypes.string,
     containerStyle: PropTypes.object,
     setValueValid: PropTypes.func,
-    validateValue: PropTypes.func,
+    onValidate: PropTypes.func,
     isValueValid: PropTypes.bool,
+    sanitizeValue: PropTypes.func,
+    onSanitized: PropTypes.func,
+    setFocusedCurrent: PropTypes.func.isRequired,
+    isFocused: PropTypes.bool.isRequired,
+    renderInput: PropTypes.func,
+    renderError: PropTypes.func,
   }
 
   static defaultProps = {
@@ -92,14 +93,27 @@ export class SimpleInput extends React.Component {
     errorStyle: {},
     errorPosition: "centerLeft",
     containerStyle: {},
-    validateValue: () => {},
+    onValidate: null,
     isValueValid: true,
     setValueValid: () => {},
+    sanitizeValue: value => value,
+    onSanitized: null,
+    renderInput: null,
+    renderError: null,
   }
 
   inputRef = React.createRef()
 
-  getValue = (current) => {
+  getOriginalValue = input => {
+    var current = input
+    if (this.inputRef.current) {
+      current = this.inputRef.current
+    }
+
+    if (!current) {
+      return
+    }
+
     switch (current.type) {
       case "text":
       case "number":
@@ -114,56 +128,65 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  handleBlurInput = event => {
-    this.handleSetFormSubmitted(false)
+  getSanitizedValue = input => {
+    const originalValue = this.getOriginalValue(input)
+    var sanitizedValue = originalValue
 
-    const value = this.getValue(event.target)
+    const { sanitizeValue, onSanitized } = this.props
+    if (_.isFunction(sanitizeValue)) {
+      sanitizedValue = sanitizeValue(originalValue)
+    }
 
-    if (value.length) {
-      const isValid = this.handleValidate(value)
-      this.handleSetValueValid(isValid)
-      this.handleSetInputEmpty(false)
-      this.handleSetInputValue(value)
+    if (originalValue !== sanitizedValue) {
+      if (_.isFunction(onSanitized)) {
+        onSanitized(originalValue, sanitizedValue)
+      }
     }
-    else {
-      this.handleSetValueValid(false)
-      this.handleSetInputEmpty(true)
-    }
+
+    return sanitizedValue
   }
 
-  handleChangeInput = event => {
-    this.handleSetFormSubmitted(false)
-  }
-
-  handleFocusInput = event => {
-    const shouldFocus = true
-    const value = this.getValue(event.target)
+  handleBlur = event => {
+    const shouldFocus = false
+    const value = this.getSanitizedValue(event.target)
 
     this.handleSetFormSubmitted(false, shouldFocus)
-
+    this.handleSetValueValid(value, shouldFocus)
     if (value.length) {
-      const isValid = this.handleValidate(value)
-      this.handleSetValueValid(isValid, shouldFocus)
       this.handleSetInputEmpty(false, shouldFocus)
+      this.handleSetInputValue(value, shouldFocus)
     }
     else {
-      this.handleSetValueValid(false, shouldFocus)
       this.handleSetInputEmpty(true, shouldFocus)
     }
   }
 
-  componentDidMount() {
-    if (this.props.isFocused === true) {
-      this.inputRef.current.focus()
+  handleChange = event => {
+    this.handleSetFormSubmitted(false)
+  }
+
+  handleFocus = event => {
+    const shouldFocus = true
+    const value = this.getSanitizedValue(event.target)
+
+    this.handleSetFormSubmitted(false, shouldFocus)
+    this.handleSetValueValid(value, shouldFocus)
+    if (value.length) {
+      this.handleSetInputEmpty(false, shouldFocus)
+    }
+    else {
+      this.handleSetInputEmpty(true, shouldFocus)
     }
   }
 
-  handleSetValueValid = (bool, shouldFocus) => {
+  handleSetValueValid = (value, shouldFocus) => {
     const { isValueValid, setValueValid, setFocusedCurrent } = this.props
 
-    if (isValueValid !== bool) {
+    const isValueValidCurrent = this.validate(value)
+
+    if (isValueValid !== isValueValidCurrent) {
       if (_.isFunction(setValueValid)) {
-        setValueValid(bool)
+        setValueValid(isValueValidCurrent)
         if (shouldFocus === true) {
           setFocusedCurrent()
         }
@@ -210,16 +233,28 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  handleValidate = (value) => {
-    const { validateValue } = this.props
-    if (_.isFunction(validateValue)) {
-      return validateValue(value)
+  validate = value => {
+    var isValid = true
+
+    const { onValidate } = this.props
+    if (_.isFunction(onValidate)) {
+      isValid = onValidate(value)
     }
+
+    return Boolean(isValid)
   }
 
-
-  handleClickError = (event) => {
+  handleClickError = event => {
     this.handleSetFormSubmitted(false)
+  }
+
+  updateFocus = () => {
+    const { isFocused } = this.props
+    if (isFocused === true) {
+      if (this.inputRef.current) {
+        this.inputRef.current.focus()
+      }
+    }
   }
 
   renderInput = () => {
@@ -243,9 +278,9 @@ export class SimpleInput extends React.Component {
         css={inputStyle}
         defaultValue={inputValue}
         placeholder={inputPlaceholder}
-        onChange={this.handleChangeInput}
-        onBlur={this.handleBlurInput}
-        onFocus={this.handleFocusInput}
+        onChange={this.handleChange}
+        onBlur={this.handleBlur}
+        onFocus={this.handleFocus}
       />
     )
 
@@ -287,9 +322,13 @@ export class SimpleInput extends React.Component {
     return renderedChild
   }
 
+  componentDidMount() {
+    this.updateFocus()
+  }
+
   render() {
     const {
-      containerStyle
+      containerStyle,
     } = this.props
 
     const renderedError = this.renderError()

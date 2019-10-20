@@ -77,12 +77,20 @@ export class SimpleInput extends React.Component {
     setValueValid: PropTypes.func,
     onValidate: PropTypes.func,
     isValueValid: PropTypes.bool,
-    sanitizeValue: PropTypes.func,
-    onSanitized: PropTypes.func,
+    onSanitize: PropTypes.func,
+    onDidSanitize: PropTypes.func,
     setFocusedCurrent: PropTypes.func.isRequired,
     isFocused: PropTypes.bool.isRequired,
     renderInput: PropTypes.func,
     renderError: PropTypes.func,
+    addValidator: PropTypes.func,
+    removeValidator: PropTypes.func,
+    addResetter: PropTypes.func,
+    removeResetter: PropTypes.func,
+    resetValue: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]).isRequired,
   }
 
   static defaultProps = {
@@ -96,10 +104,14 @@ export class SimpleInput extends React.Component {
     onValidate: null,
     isValueValid: true,
     setValueValid: () => {},
-    sanitizeValue: null,
-    onSanitized: null,
+    onSanitize: null,
+    onDidSanitize: null,
     renderInput: null,
     renderError: null,
+    addValidator: null,
+    removeValidator: null,
+    addResetter: null,
+    removeResetter: null,
   }
 
   inputRef = React.createRef()
@@ -132,14 +144,14 @@ export class SimpleInput extends React.Component {
     const originalValue = this.getOriginalValue(input)
     var sanitizedValue = originalValue
 
-    const { sanitizeValue, onSanitized } = this.props
-    if (_.isFunction(sanitizeValue)) {
-      sanitizedValue = sanitizeValue(originalValue)
+    const { onSanitize, onDidSanitize } = this.props
+    if (_.isFunction(onSanitize)) {
+      sanitizedValue = onSanitize(originalValue)
     }
 
     if (originalValue !== sanitizedValue) {
-      if (_.isFunction(onSanitized)) {
-        onSanitized(originalValue, sanitizedValue)
+      if (_.isFunction(onDidSanitize)) {
+        onDidSanitize(originalValue, sanitizedValue)
       }
     }
 
@@ -244,6 +256,12 @@ export class SimpleInput extends React.Component {
     return Boolean(isValid)
   }
 
+  reset = () => {
+    const { resetValue } = this.props
+    this.setInputValue(resetValue)
+  }
+
+
   handleClickError = event => {
     this.handleSetFormSubmitted(false)
   }
@@ -323,7 +341,24 @@ export class SimpleInput extends React.Component {
   }
 
   componentDidMount() {
+    const { addValidator, addResetter } = this.props
+    if (_.isFunction(addValidator)) {
+      addValidator(this.validate)
+    }
+    if (_.isFunction(addResetter)) {
+      addResetter(this.reset)
+    }
     this.updateFocus()
+  }
+
+  componentWillUnmount() {
+    const { removeValidator, removeResetter } = this.props
+    if (_.isFunction(removeValidator)) {
+      removeValidator(this.validate)
+    }
+    if (_.isFunction(removeResetter)) {
+      removeResetter(this.reset)
+    }
   }
 
   render() {

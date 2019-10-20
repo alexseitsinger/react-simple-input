@@ -11,10 +11,10 @@
   optionalDependencies:
     eslint-import-resolver-webpack "^0.11.1"
 
-"@alexseitsinger/eslint-config-react@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@alexseitsinger/eslint-config-react/-/eslint-config-react-0.6.0.tgz#29366ba5b66eaa5e589792cb93fdaa16515d6f7f"
-  integrity sha512-qEQr0IP4/axSFmhYaoybAEhy6GorPAfRpM3mSdg3+qFZwDQAa0YvxTJeZS1Nz7yY7/l8qr7bV0st6cCsoI/S/g==
+"@alexseitsinger/eslint-config-react@^0.7.0":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@alexseitsinger/eslint-config-react/-/eslint-config-react-0.7.0.tgz#11ca8c9b714eed4caa34ba5300a518d100396227"
+  integrity sha512-SEhB4sY/ogrx1VHyF6vWEVgxgaUBdX44BCbSTgkHQhxym8FiNtd2JgMZmr2xS3uwr33h75YPEzuCDneUmnDUvw==
 
 "@alexseitsinger/form-field-error@^0.1.0":
   version "0.1.0"

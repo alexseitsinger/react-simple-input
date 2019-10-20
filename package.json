@@ -32,7 +32,7 @@
   ],
   "devDependencies": {
     "@alexseitsinger/eslint-config-base": "^0.10.0",
-    "@alexseitsinger/eslint-config-react": "^0.6.0",
+    "@alexseitsinger/eslint-config-react": "^0.7.0",
     "@babel/core": "7.6.4",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/plugin-proposal-export-namespace-from": "7.5.2",

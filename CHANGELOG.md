@@ -1,3 +1,10 @@
+<a name="v3.1.0"></a>
+## [v3.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v3.0.0...v3.1.0) (2019-10-21)
+
+### Features
+- Resets empty fields on blur. ([5a995e6](https://github.com/alexseitsinger/react-simple-input/commit/5a995e69f7cc1d956886c3f03aa35e18b4420e68))
+
+
 <a name="v3.0.0"></a>
 ## [v3.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v2.0.0...v3.0.0) (2019-10-21)
 

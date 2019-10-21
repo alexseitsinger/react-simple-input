@@ -79,8 +79,8 @@ export class SimpleInput extends React.Component {
     isValueValid: PropTypes.bool,
     onSanitize: PropTypes.func,
     onDidSanitize: PropTypes.func,
-    setFocusedCurrent: PropTypes.func.isRequired,
-    isFocused: PropTypes.bool.isRequired,
+    setInputFocused: PropTypes.func.isRequired,
+    isInputFocused: PropTypes.bool.isRequired,
     renderInput: PropTypes.func,
     renderError: PropTypes.func,
     addValidator: PropTypes.func,
@@ -116,16 +116,7 @@ export class SimpleInput extends React.Component {
 
   inputRef = React.createRef()
 
-  getOriginalValue = input => {
-    var current = input
-    if (this.inputRef.current) {
-      current = this.inputRef.current
-    }
-
-    if (!current) {
-      return
-    }
-
+  getOriginalValue = current => {
     switch (current.type) {
       case "text":
       case "number":
@@ -163,12 +154,14 @@ export class SimpleInput extends React.Component {
     const value = this.getSanitizedValue(event.target)
 
     this.handleSetFormSubmitted(false, shouldFocus)
-    this.handleSetValueValid(value, shouldFocus)
-    if (value.length) {
+    if (value && value.length) {
+      const isValid = this.validate(value)
+      this.handleSetValueValid(isValid, shouldFocus)
       this.handleSetInputEmpty(false, shouldFocus)
       this.handleSetInputValue(value, shouldFocus)
     }
     else {
+      this.handleSetValueValid(false, shouldFocus)
       this.handleSetInputEmpty(true, shouldFocus)
     }
   }
@@ -182,64 +175,64 @@ export class SimpleInput extends React.Component {
     const value = this.getSanitizedValue(event.target)
 
     this.handleSetFormSubmitted(false, shouldFocus)
-    this.handleSetValueValid(value, shouldFocus)
-    if (value.length) {
+    if (value && value.length) {
+      const isValid = this.validate(value)
+      this.handleSetValueValid(isValid, shouldFocus)
       this.handleSetInputEmpty(false, shouldFocus)
     }
     else {
+      this.handleSetValueValid(false, shouldFocus)
       this.handleSetInputEmpty(true, shouldFocus)
     }
   }
 
-  handleSetValueValid = (value, shouldFocus) => {
-    const { isValueValid, setValueValid, setFocusedCurrent } = this.props
+  handleSetValueValid = (bool, shouldFocus) => {
+    const { isValueValid, setValueValid, setInputFocused } = this.props
 
-    const isValueValidCurrent = this.validate(value)
-
-    if (isValueValid !== isValueValidCurrent) {
+    if (isValueValid !== bool) {
       if (_.isFunction(setValueValid)) {
-        setValueValid(isValueValidCurrent)
+        setValueValid(bool)
         if (shouldFocus === true) {
-          setFocusedCurrent()
+          setInputFocused()
         }
       }
     }
   }
 
   handleSetInputEmpty = (bool, shouldFocus) => {
-    const { isInputEmpty, setInputEmpty, setFocusedCurrent } = this.props
+    const { isInputEmpty, setInputEmpty, setInputFocused } = this.props
 
     if (isInputEmpty !== bool) {
       if (_.isFunction(setInputEmpty)) {
         setInputEmpty(bool)
         if (shouldFocus === true) {
-          setFocusedCurrent()
+          setInputFocused()
         }
       }
     }
   }
 
   handleSetInputValue = (value, shouldFocus) => {
-    const { inputValue, setInputValue, setFocusedCurrent } = this.props
+    const { inputValue, setInputValue, setInputFocused } = this.props
 
     if (inputValue !== value) {
       if (_.isFunction(setInputValue)) {
         setInputValue(value)
         if (shouldFocus === true) {
-          setFocusedCurrent()
+          setInputFocused()
         }
       }
     }
   }
 
   handleSetFormSubmitted = (bool, shouldFocus) => {
-    const { isFormSubmitted, setFormSubmitted, setFocusedCurrent } = this.props
+    const { isFormSubmitted, setFormSubmitted, setInputFocused } = this.props
 
     if (isFormSubmitted !== bool) {
       if (_.isFunction(setFormSubmitted)) {
         setFormSubmitted(bool)
         if (shouldFocus === true) {
-          setFocusedCurrent()
+          setInputFocused()
         }
       }
     }
@@ -258,7 +251,8 @@ export class SimpleInput extends React.Component {
 
   reset = () => {
     const { resetValue } = this.props
-    this.setInputValue(resetValue)
+    const shouldFocus = false
+    this.handleSetInputValue(resetValue, shouldFocus)
   }
 
 
@@ -267,11 +261,9 @@ export class SimpleInput extends React.Component {
   }
 
   updateFocus = () => {
-    const { isFocused } = this.props
-    if (isFocused === true) {
-      if (this.inputRef.current) {
-        this.inputRef.current.focus()
-      }
+    const { isInputFocused } = this.props
+    if (isInputFocused === true) {
+      this.inputRef.current.focus()
     }
   }
 

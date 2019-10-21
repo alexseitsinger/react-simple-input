@@ -150,6 +150,7 @@ export class SimpleInput extends React.Component {
   }
 
   handleBlur = event => {
+    const { resetValue } = this.props
     const shouldFocus = false
     const value = this.getSanitizedValue(event.target)
 
@@ -161,8 +162,9 @@ export class SimpleInput extends React.Component {
       this.handleSetInputValue(value, shouldFocus)
     }
     else {
-      this.handleSetValueValid(false, shouldFocus)
+      this.handleSetInputValue(resetValue, shouldFocus)
       this.handleSetInputEmpty(true, shouldFocus)
+      this.handleSetValueValid(false, shouldFocus)
     }
   }
 

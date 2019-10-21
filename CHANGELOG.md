@@ -1,3 +1,15 @@
+<a name="v3.0.0"></a>
+## [v3.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v2.0.0...v3.0.0) (2019-10-21)
+
+### Code Refactoring
+- Changes default prop. ([ba7be19](https://github.com/alexseitsinger/react-simple-input/commit/ba7be191cc8cdc426ed321fb52c7885abf0ce9e2))
+- Renames some props. ([26bf931](https://github.com/alexseitsinger/react-simple-input/commit/26bf931bd2408d1289511bdcd51b311a005aca36))
+
+### Features
+- Adds reset methods for form. ([64339ec](https://github.com/alexseitsinger/react-simple-input/commit/64339ec0b557a5afb4550b4b64a9e70564b2b4d0))
+- Adds sanitizing values. ([150fc3e](https://github.com/alexseitsinger/react-simple-input/commit/150fc3eb0230ceccec06917c35bf7dbdccd96d35))
+
+
 <a name="v2.0.0"></a>
 ## [v2.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v1.4.0...v2.0.0) (2019-10-19)
 

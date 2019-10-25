@@ -164,13 +164,13 @@ export class SimpleInput extends React.Component {
   }
 
   handleChange = event => {
+    this.handleSetFormSubmitted(false)
   }
 
   handleFocus = event => {
     const shouldFocus = true
     const value = this.getSanitizedValue(event.target)
 
-    this.handleSetFormSubmitted(false)
     if (value && value.length) {
       const isValid = this.validate(value)
       this.handleSetValueValid(isValid, shouldFocus)
@@ -268,12 +268,12 @@ export class SimpleInput extends React.Component {
       return onCheck(inputValue)
     }
 
-    var result = false
+    var result = true
     if (inputValue && inputValue.length) {
-      result = true
+      result = false
     }
 
-    this.handleSetInputEmpty(!result)
+    this.handleSetInputEmpty(result)
 
     return result
   }
@@ -349,8 +349,12 @@ export class SimpleInput extends React.Component {
       renderError,
     } = this.props
 
-    const hasError = Boolean(!isValueValid || isInputEmpty)
-    const isErrorVisible = Boolean(isFormSubmitted && hasError)
+    const hasError = (
+      isInputEmpty === true || isValueValid === false
+    )
+    const isErrorVisible = (
+      isFormSubmitted === true && hasError === true
+    )
 
     const renderedChild = (
       <FormFieldError

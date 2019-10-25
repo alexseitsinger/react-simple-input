@@ -1,3 +1,10 @@
+<a name="v4.0.0"></a>
+## [v4.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v3.1.0...v4.0.0) (2019-10-25)
+
+### Features
+- Adds checkers and updates. ([014a716](https://github.com/alexseitsinger/react-simple-input/commit/014a716b77e2279c7ac494b7b75493b4a3651f6d))
+
+
 <a name="v3.1.0"></a>
 ## [v3.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v3.0.0...v3.1.0) (2019-10-21)
 

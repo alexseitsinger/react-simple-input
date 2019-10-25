@@ -6,57 +6,42 @@ import _ from "underscore"
 import { Container, Input } from "./elements"
 
 /**
- * An input that has a built in error message.
+ * A simple input for a simple form.
  *
  * @param {object} props
  * @param {boolean} props.isFormSubmitted
- * The boolean value if the form is submitted.
  * @param {function} props.setFormSubmitted
- * The function to invoke to toggle that the form is submitted.
- * @param {boolean} props.isInputEmpty
- * If this input element is currently empty
- * @param {function} props.setInputEmpty
- * The function to invoke to toggle the inputs emptyness state
- * @param {boolean} props.inputValue
- * The current value of the input
- * @param {function} props.setInputValue
- * The function to invoke to set the inputs value
- * @param {string} props.inputPlaceholder
- * The placeholder text to use for the input element.
- * @param {object} props.inputStyle
- * The inline style to use on the input element.
- * @param {string} props.inputType
- * The input dom element type to use.
  * @param {string} props.errorMessage
- * The message to display when the input is empty.
- * @param {string} props.errorPosition
- * The placement of the error in the input element.
  * @param {object} props.errorStyle
- * The inline style tp use on the error element.
+ * @param {object} props.inputStyle
+ * @param {string} props.inputPlaceholder
+ * @param {string|number|object} props.inputValue
+ * @param {function} props.setInputValue
+ * @param {boolean} props.isInputEmpty
+ * @param {function} props.setInputEmpty
+ * @param {string} props.inputType
+ * @param {string} props.inputName
  * @param {object} props.containerStyle
- * The inline style to use for the container element.
- *
- * @example
- * function App({ ... }) {
- *   return (
- *     <Form onSubmit={onSubmit}>
- *       <SimpleInput
- *         inputType={"text"}
- *         inputValue={inputValue}
- *         setInputValue={setInputValue}
- *         isInputEmpty={isInputEmpty}
- *         setInputEmpty={setInputEmpty}
- *         isFormSubmitted={isSubmitted}
- *         setFormSubmitted={setSubmitted}
- *         inputPlaceholder={"Input..."}
- *         errorMessage={"The input is empty."}
- *         errorPosition={"centerLeft"}
- *         errorStyle={{width: "100%", height: "100%"}}
- *         inputStyle={{backgroundColor: "#FFFFFF", padding: "0.333em"}}
- *       />
- *     </Form>
- *   )
- * }
+ * @param {function} props.setInputValueValid
+ * @param {boolean} props.isInputValueValid
+ * @param {function} props.onValidate
+ * @param {function} props.onSanitize
+ * @param {function} props.onDidSanitize
+ * @param {function} props.setInputFocused
+ * @param {boolean} props.isInputFocused
+ * @param {function} props.setInputFocused
+ * @param {function} props.renderInput
+ * @param {function} props.renderError
+ * @param {function} props.addValidator
+ * @param {function} props.removeValidator
+ * @param {function} props.addResetter
+ * @param {function} props.removeResetter
+ * @param {function} props.resetValue
+ * @param {function} props.setEvaluator
+ * @param {function} props.removeEvaluator
+ * @param {function} props.addChecker
+ * @param {function} props.removeChecker
+ * @param {function} props.onCheck
  */
 export class SimpleInput extends React.Component {
   static propTypes = {
@@ -75,8 +60,8 @@ export class SimpleInput extends React.Component {
     inputName: PropTypes.string,
     containerStyle: PropTypes.object,
     setValueValid: PropTypes.func,
-    onValidate: PropTypes.func,
     isValueValid: PropTypes.bool,
+    onValidate: PropTypes.func,
     onSanitize: PropTypes.func,
     onDidSanitize: PropTypes.func,
     setInputFocused: PropTypes.func.isRequired,
@@ -87,6 +72,12 @@ export class SimpleInput extends React.Component {
     removeValidator: PropTypes.func,
     addResetter: PropTypes.func,
     removeResetter: PropTypes.func,
+    addEvaluator: PropTypes.func,
+    removeEvaluator: PropTypes.func,
+    onNormalize: PropTypes.func,
+    addChecker: PropTypes.func,
+    removeChecker: PropTypes.func,
+    onCheck: PropTypes.func,
     resetValue: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
@@ -112,6 +103,12 @@ export class SimpleInput extends React.Component {
     removeValidator: null,
     addResetter: null,
     removeResetter: null,
+    addEvaluator: null,
+    removeEvaluator: null,
+    onNormalize: null,
+    addChecker: null,
+    removeChecker: null,
+    onCheck: null,
   }
 
   inputRef = React.createRef()
@@ -150,33 +147,30 @@ export class SimpleInput extends React.Component {
   }
 
   handleBlur = event => {
-    const { resetValue } = this.props
-    const shouldFocus = false
+    const { resetValue, inputValue } = this.props
     const value = this.getSanitizedValue(event.target)
 
-    this.handleSetFormSubmitted(false, shouldFocus)
     if (value && value.length) {
       const isValid = this.validate(value)
-      this.handleSetValueValid(isValid, shouldFocus)
-      this.handleSetInputEmpty(false, shouldFocus)
-      this.handleSetInputValue(value, shouldFocus)
+      this.handleSetInputValue(value, true)
+      this.handleSetValueValid(isValid, true)
+      this.handleSetInputEmpty(false, true)
     }
     else {
-      this.handleSetInputValue(resetValue, shouldFocus)
-      this.handleSetInputEmpty(true, shouldFocus)
-      this.handleSetValueValid(false, shouldFocus)
+      this.handleSetInputEmpty(true, false)
+      this.handleSetValueValid(false, false)
+      this.handleSetInputValue(resetValue, false)
     }
   }
 
   handleChange = event => {
-    this.handleSetFormSubmitted(false)
   }
 
   handleFocus = event => {
     const shouldFocus = true
     const value = this.getSanitizedValue(event.target)
 
-    this.handleSetFormSubmitted(false, shouldFocus)
+    this.handleSetFormSubmitted(false)
     if (value && value.length) {
       const isValid = this.validate(value)
       this.handleSetValueValid(isValid, shouldFocus)
@@ -251,12 +245,53 @@ export class SimpleInput extends React.Component {
     return Boolean(isValid)
   }
 
+  normalize = value => {
+    const {
+      onNormalize,
+    } = this.props
+
+    var normalized = value
+    if (_.isFunction(onNormalize)) {
+      normalized = onNormalize(value)
+    }
+
+    return normalized
+  }
+
+  check = () => {
+    const {
+      inputValue,
+      onCheck,
+    } = this.props
+
+    if (_.isFunction(onCheck)) {
+      return onCheck(inputValue)
+    }
+
+    var result = false
+    if (inputValue && inputValue.length) {
+      result = true
+    }
+
+    this.handleSetInputEmpty(!result)
+
+    return result
+  }
+
+  evaluate = () => {
+    const { inputName, inputValue } = this.props
+    const normalized = this.normalize(inputValue)
+    return {
+      name: inputName,
+      value: normalized,
+    }
+  }
+
   reset = () => {
     const { resetValue } = this.props
     const shouldFocus = false
     this.handleSetInputValue(resetValue, shouldFocus)
   }
-
 
   handleClickError = event => {
     this.handleSetFormSubmitted(false)
@@ -335,23 +370,54 @@ export class SimpleInput extends React.Component {
   }
 
   componentDidMount() {
-    const { addValidator, addResetter } = this.props
+    const {
+      addValidator,
+      addResetter,
+      addEvaluator,
+      addChecker,
+    } = this.props
+
     if (_.isFunction(addValidator)) {
       addValidator(this.validate)
     }
     if (_.isFunction(addResetter)) {
       addResetter(this.reset)
     }
+    if (_.isFunction(addEvaluator)) {
+      addEvaluator(this.evaluate)
+    }
+    if (_.isFunction(addChecker)) {
+      addChecker(this.check)
+    }
     this.updateFocus()
   }
 
+  componentDidUpdate(prevProps) {
+    const { inputValue } = this.props
+    if (prevProps.inputValue !== inputValue) {
+      this.handleSetFormSubmitted(false)
+    }
+  }
+
   componentWillUnmount() {
-    const { removeValidator, removeResetter } = this.props
+    const {
+      removeValidator,
+      removeResetter,
+      removeEvaluator,
+      removeChecker,
+    } = this.props
+
     if (_.isFunction(removeValidator)) {
       removeValidator(this.validate)
     }
     if (_.isFunction(removeResetter)) {
       removeResetter(this.reset)
+    }
+    if (_.isFunction(removeEvaluator)) {
+      removeEvaluator(this.evaluate)
+    }
+    if (_.isFunction(removeChecker)) {
+      removeChecker(this.check)
     }
   }
 

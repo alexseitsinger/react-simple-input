@@ -1,3 +1,10 @@
+<a name="v4.1.0"></a>
+## [v4.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.0.0...v4.1.0) (2019-10-25)
+
+### Code Refactoring
+- Cleans up renderError. ([c5d9d1c](https://github.com/alexseitsinger/react-simple-input/commit/c5d9d1cea6a275f39765146a4b58681c611e9e9d))
+
+
 <a name="v4.0.0"></a>
 ## [v4.0.0](https://github.com/alexseitsinger/react-simple-input/compare/v3.1.0...v4.0.0) (2019-10-25)
 

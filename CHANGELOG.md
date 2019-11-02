@@ -1,3 +1,10 @@
+<a name="v4.3.0"></a>
+## [v4.3.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.2.1...v4.3.0) (2019-11-02)
+
+### Code Refactoring
+- Make resetValue default. ([f3fb04f](https://github.com/alexseitsinger/react-simple-input/commit/f3fb04f2f3aa733badf94e5b84f7e7ad46313e96))
+
+
 <a name="v4.2.1"></a>
 ## [v4.2.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.2.0...v4.2.1) (2019-11-02)
 

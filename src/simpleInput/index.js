@@ -400,7 +400,11 @@ export class SimpleInput extends React.Component {
   }
 
   handleClick = () => {
-    this.handleSetFormSubmitted(false)
+    // If we do anything to change the redux store from onClick, then any
+    // onloadend handlers wont work, since the component gets re-mounted before
+    // it completes. Therefore, avoid changing state until focus or blue or
+    // change.
+    //this.handleSetFormSubmitted(false, true)
   }
 
   renderError = () => {

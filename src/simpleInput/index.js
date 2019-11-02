@@ -82,9 +82,13 @@ export class SimpleInput extends React.Component {
       PropTypes.string,
       PropTypes.number,
     ]).isRequired,
+    onChange: PropTypes.func,
+    onEvaluate: PropTypes.func,
   }
 
   static defaultProps = {
+    onEvaluate: null,
+    onChange: null,
     inputPlaceholder: "",
     inputType: "text",
     inputStyle: {},
@@ -146,11 +150,26 @@ export class SimpleInput extends React.Component {
     return sanitizedValue
   }
 
+  doesValueHaveData = value => {
+    if (!value) {
+      return false
+    }
+
+    if (_.isString(value) && value.length) {
+      return true
+    }
+    if (_.isArray(value) && value.length) {
+      return true
+    }
+
+    return false
+  }
+
   handleBlur = event => {
-    const { resetValue, inputValue } = this.props
+    const { resetValue } = this.props
     const value = this.getSanitizedValue(event.target)
 
-    if (value && value.length) {
+    if (this.doesValueHaveData(value) === true) {
       const isValid = this.validate(value)
       this.handleSetInputValue(value, true)
       this.handleSetValueValid(isValid, true)
@@ -165,13 +184,27 @@ export class SimpleInput extends React.Component {
 
   handleChange = event => {
     this.handleSetFormSubmitted(false)
+
+    // If we get an onChange handler, its probably for a file input field that
+    // has a preview image loaded. Therefore, in order to pass the correct value
+    // to the input and the redux store, return the methods we use do do this.
+    const { onChange } = this.props
+    if (_.isFunction(onChange)) {
+      onChange(
+        this.getSanitizedValue(event.target),
+        this.handleSetFormSubmitted,
+        this.handleSetInputEmpty,
+        this.handleSetInputValue,
+        this.handleSetInputValueValid,
+      )
+    }
   }
 
   handleFocus = event => {
     const shouldFocus = true
     const value = this.getSanitizedValue(event.target)
 
-    if (value && value.length) {
+    if (this.doesValueHaveData(value) === true) {
       const isValid = this.validate(value)
       this.handleSetValueValid(isValid, shouldFocus)
       this.handleSetInputEmpty(false, shouldFocus)
@@ -269,7 +302,7 @@ export class SimpleInput extends React.Component {
     }
 
     var result = true
-    if (inputValue && inputValue.length) {
+    if (this.doesValueHaveData(inputValue) === true) {
       result = false
     }
 
@@ -279,8 +312,17 @@ export class SimpleInput extends React.Component {
   }
 
   evaluate = () => {
-    const { inputName, inputValue } = this.props
+    const { inputName, inputValue, onEvaluate } = this.props
     const normalized = this.normalize(inputValue)
+    // When our simple form trys to evaulate any file input fields, it doesnt
+    // obtain any value, since the redux action causes a re-render, which resets
+    // the file input field's value. Any attempt to set this value using value
+    // or defaultValue props results in a DOM error.
+    if (_.isFunction(onEvaluate)) {
+      const { current } = this.inputRef
+      return onEvaluate(inputName, normalized, current)
+    }
+
     return {
       name: inputName,
       value: normalized,
@@ -299,8 +341,11 @@ export class SimpleInput extends React.Component {
 
   updateFocus = () => {
     const { isInputFocused } = this.props
+    const { current } = this.inputRef
     if (isInputFocused === true) {
-      this.inputRef.current.focus()
+      if (current) {
+        current.focus()
+      }
     }
   }
 
@@ -312,30 +357,50 @@ export class SimpleInput extends React.Component {
       inputStyle,
       inputValue,
       inputPlaceholder,
+      isDisabled,
     } = this.props
 
     const key = `${inputType}_input_${inputName}`
 
-    const renderedChild = (
-      <Input
-        key={key}
-        ref={this.inputRef}
-        name={inputName}
-        type={inputType}
-        css={inputStyle}
-        defaultValue={inputValue}
-        placeholder={inputPlaceholder}
-        onChange={this.handleChange}
-        onBlur={this.handleBlur}
-        onFocus={this.handleFocus}
-      />
-    )
-
-    if (_.isFunction(renderInput)) {
-      return renderInput(renderedChild)
+    // React throws an error if we try to set defaultValue on file inputs, so
+    // avoid settings it altogether. Also, since file inputs dont have a
+    // placeholder, avoid setting that as well.
+    var rendered
+    const renderProps = {
+      disabled: isDisabled,
+      key: key,
+      css: inputStyle,
+      ref: this.inputRef,
+      name: inputName,
+      type: inputType,
+      onChange: this.handleChange,
+      onFocus: this.handleFocus,
+      onBlur: this.handleBlur,
+    }
+    if (inputType === "file") {
+      rendered = (
+        <Input {...renderProps} />
+      )
+    }
+    else {
+      rendered = (
+        <Input
+          {...renderProps}
+          defaultValue={inputValue}
+          placeholder={inputPlaceholder}
+        />
+      )
     }
 
-    return renderedChild
+    if (_.isFunction(renderInput)) {
+      return renderInput(rendered)
+    }
+
+    return rendered
+  }
+
+  handleClick = () => {
+    this.handleSetFormSubmitted(false)
   }
 
   renderError = () => {
@@ -379,6 +444,7 @@ export class SimpleInput extends React.Component {
       addResetter,
       addEvaluator,
       addChecker,
+      onDidMount,
     } = this.props
 
     if (_.isFunction(addValidator)) {
@@ -393,6 +459,14 @@ export class SimpleInput extends React.Component {
     if (_.isFunction(addChecker)) {
       addChecker(this.check)
     }
+
+    // Our Picture input field needs to reset the input field outside the normal
+    // flow. Since its a superset of this class, we need to pass the instance
+    // method when this gets mounted so it can use it when its ready.
+    if (_.isFunction(onDidMount)) {
+      onDidMount(this)
+    }
+
     this.updateFocus()
   }
 
@@ -434,7 +508,9 @@ export class SimpleInput extends React.Component {
     const renderedInput = this.renderInput()
 
     return (
-      <Container css={containerStyle}>
+      <Container
+        css={containerStyle}
+        onClick={this.handleClick}>
         {renderedError}
         {renderedInput}
       </Container>

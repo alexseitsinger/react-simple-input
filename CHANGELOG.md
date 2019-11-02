@@ -1,3 +1,10 @@
+<a name="v4.2.1"></a>
+## [v4.2.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.2.0...v4.2.1) (2019-11-02)
+
+### Bug Fixes
+- Fixes lost focus onloadend. ([0ca6dc1](https://github.com/alexseitsinger/react-simple-input/commit/0ca6dc107e25fb4b1d5731a3b702e49e38d70933))
+
+
 <a name="v4.2.0"></a>
 ## [v4.2.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.1.0...v4.2.0) (2019-11-02)
 

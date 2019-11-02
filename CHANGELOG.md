@@ -1,3 +1,10 @@
+<a name="v4.2.0"></a>
+## [v4.2.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.1.0...v4.2.0) (2019-11-02)
+
+### Bug Fixes
+- Updates for file input. ([85a6f8f](https://github.com/alexseitsinger/react-simple-input/commit/85a6f8fb6a02ca8f0fabc0a31e8b7f3ac4f08738))
+
+
 <a name="v4.1.0"></a>
 ## [v4.1.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.0.0...v4.1.0) (2019-10-25)
 

@@ -48,6 +48,7 @@ export class SimpleInput extends React.Component {
     isFormSubmitted: PropTypes.bool.isRequired,
     setFormSubmitted: PropTypes.func.isRequired,
     errorMessage: PropTypes.string.isRequired,
+    setErrorMessage: PropTypes.func.isRequired,
     errorPosition: PropTypes.string,
     errorStyle: PropTypes.object,
     inputStyle: PropTypes.object,
@@ -84,9 +85,23 @@ export class SimpleInput extends React.Component {
     ]),
     onChange: PropTypes.func,
     onEvaluate: PropTypes.func,
+    minLength: PropTypes.number,
+    minLengthErrorMessage: PropTypes.string,
+    maxLength: PropTypes.number,
+    maxLengthErrorMessage: PropTypes.string,
+    isDisabled: PropTypes.bool,
+    onDidMount: PropTypes.func,
+    inputEmptyErrorMessage: PropTypes.string,
   }
 
   static defaultProps = {
+    inputEmptyErrorMessage: null,
+    onDidMount: null,
+    isDisabled: false,
+    minLength: 8,
+    minLengthErrorMessage: null,
+    maxLength: 24,
+    maxLengthErrorMessage: null,
     resetValue: "",
     onEvaluate: null,
     onChange: null,
@@ -117,6 +132,22 @@ export class SimpleInput extends React.Component {
   }
 
   inputRef = React.createRef()
+
+  meetsMinLength = value => {
+    const { minLength } = this.props
+    if (!minLength) {
+      return true
+    }
+    return value.length >= minLength
+  }
+
+  meetsMaxLength = value => {
+    const { maxLength } = this.props
+    if (!maxLength) {
+      return true
+    }
+    return value.length <= maxLength
+  }
 
   getOriginalValue = current => {
     switch (current.type) {
@@ -268,15 +299,58 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  validate = value => {
-    var isValid = true
+  handleSetErrorMessage = message => {
+    const {
+      errorMessage,
+      setErrorMessage,
+    } = this.props
 
-    const { onValidate } = this.props
-    if (_.isFunction(onValidate)) {
-      isValid = onValidate(value)
+    if (errorMessage !== message) {
+      if (_.isFunction(setErrorMessage)) {
+        setErrorMessage(message)
+      }
+    }
+  }
+
+  validate = value => {
+    const {
+      inputType,
+      onValidate,
+      minLength,
+      minLengthErrorMessage,
+      maxLength,
+      maxLengthErrorMessage,
+    } = this.props
+
+    if (inputType !== "file") {
+      if (this.meetsMinLength(value) === false) {
+        this.handleSetErrorMessage(
+          minLengthErrorMessage
+          ? minLengthErrorMessage
+          : `Must be ${minLength} characters or more`
+        )
+        return false
+      }
+
+      if (this.meetsMaxLength(value) === false) {
+        this.handleSetErrorMessage(
+          maxLengthErrorMessage
+          ? maxLengthErrorMessage
+          : `Must be ${maxLength} characters or less`
+        )
+        return false
+      }
     }
 
-    return Boolean(isValid)
+    if (_.isFunction(onValidate)) {
+      const message = onValidate(value)
+      if (message) {
+        this.handleSetErrorMessage(message)
+        return false
+      }
+    }
+
+    return true
   }
 
   normalize = value => {
@@ -412,10 +486,11 @@ export class SimpleInput extends React.Component {
     const {
       isValueValid,
       isInputEmpty,
+      inputEmptyErrorMessage,
       isFormSubmitted,
       errorPosition,
-      errorMessage,
       errorStyle,
+      errorMessage,
       renderError,
     } = this.props
 
@@ -426,12 +501,19 @@ export class SimpleInput extends React.Component {
       isFormSubmitted === true && hasError === true
     )
 
+    var finalErrorMessage = errorMessage
+    if (isInputEmpty === true) {
+      finalErrorMessage = inputEmptyErrorMessage
+        ? inputEmptyErrorMessage
+        : "This field is required"
+    }
+
     const renderedChild = (
       <FormFieldError
         isVisible={isErrorVisible}
         position={errorPosition}
         onClick={this.handleClickError}
-        text={errorMessage}
+        text={finalErrorMessage}
         containerStyle={errorStyle}
       />
     )

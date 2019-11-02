@@ -81,12 +81,13 @@ export class SimpleInput extends React.Component {
     resetValue: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
-    ]).isRequired,
+    ]),
     onChange: PropTypes.func,
     onEvaluate: PropTypes.func,
   }
 
   static defaultProps = {
+    resetValue: "",
     onEvaluate: null,
     onChange: null,
     inputPlaceholder: "",

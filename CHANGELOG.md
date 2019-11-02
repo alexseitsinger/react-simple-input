@@ -1,3 +1,10 @@
+<a name="v4.5.0"></a>
+## [v4.5.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.4.0...v4.5.0) (2019-11-02)
+
+### Code Refactoring
+- Uses ref for value. ([39deebd](https://github.com/alexseitsinger/react-simple-input/commit/39deebded1fecd9f3c8986f76a39c12f6314cafe))
+
+
 <a name="v4.4.0"></a>
 ## [v4.4.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.3.0...v4.4.0) (2019-11-02)
 

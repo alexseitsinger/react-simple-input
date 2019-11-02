@@ -149,7 +149,9 @@ export class SimpleInput extends React.Component {
     return value.length <= maxLength
   }
 
-  getOriginalValue = current => {
+  getOriginalValue = () => {
+    const { current } = this.inputRef
+
     switch (current.type) {
       case "text":
       case "number":
@@ -164,8 +166,8 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  getSanitizedValue = input => {
-    const originalValue = this.getOriginalValue(input)
+  getSanitizedValue = () => {
+    const originalValue = this.getOriginalValue()
     var sanitizedValue = originalValue
 
     const { onSanitize, onDidSanitize } = this.props
@@ -227,7 +229,7 @@ export class SimpleInput extends React.Component {
         this.handleSetFormSubmitted,
         this.handleSetInputEmpty,
         this.handleSetInputValue,
-        this.handleSetInputValueValid,
+        this.handleSetValueValid,
       )
     }
   }
@@ -312,7 +314,7 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  validate = value => {
+  validate = () => {
     const {
       inputType,
       onValidate,
@@ -322,6 +324,8 @@ export class SimpleInput extends React.Component {
       maxLengthErrorMessage,
     } = this.props
 
+    const value = this.getSanitizedValue()
+
     if (inputType !== "file") {
       if (this.meetsMinLength(value) === false) {
         this.handleSetErrorMessage(
@@ -329,6 +333,7 @@ export class SimpleInput extends React.Component {
           ? minLengthErrorMessage
           : `Must be ${minLength} characters or more`
         )
+        this.handleSetValueValid(false, false)
         return false
       }
 
@@ -338,6 +343,7 @@ export class SimpleInput extends React.Component {
           ? maxLengthErrorMessage
           : `Must be ${maxLength} characters or less`
         )
+        this.handleSetValueValid(false, false)
         return false
       }
     }
@@ -346,10 +352,12 @@ export class SimpleInput extends React.Component {
       const message = onValidate(value)
       if (message) {
         this.handleSetErrorMessage(message)
+        this.handleSetValueValid(false, false)
         return false
       }
     }
 
+    this.handleSetValueValid(true, false)
     return true
   }
 

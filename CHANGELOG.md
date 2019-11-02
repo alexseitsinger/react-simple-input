@@ -1,3 +1,10 @@
+<a name="v4.4.0"></a>
+## [v4.4.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.3.0...v4.4.0) (2019-11-02)
+
+### Features
+- Adds string length checks. ([a2ed4a4](https://github.com/alexseitsinger/react-simple-input/commit/a2ed4a46c6ba65d534a80951a1f5a043e5d9b0ee))
+
+
 <a name="v4.3.0"></a>
 ## [v4.3.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.2.1...v4.3.0) (2019-11-02)
 

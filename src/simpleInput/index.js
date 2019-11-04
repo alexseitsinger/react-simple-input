@@ -254,8 +254,11 @@ export class SimpleInput extends React.Component {
     const {
       setNextInputFocused,
       setLastInputFocused,
-      setCurrentInputBlurred,
     } = this.props
+
+    const shouldFocusLast = false
+    const shouldFocusCurrent = false
+    const shouldFocusNext = false
 
     const tabKeyCode = 9
 
@@ -263,16 +266,13 @@ export class SimpleInput extends React.Component {
     const keyCode = event.which
 
     if (keyCode === tabKeyCode) {
-      console.log("tab key")
-      this.handleSetFormSubmitted(false, true)
+      this.handleSetFormSubmitted(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
       //setCurrentInputBlurred()
 
       if (isShift) {
-        console.log("set last focused")
         setLastInputFocused()
       }
       else {
-        console.log("set next focused")
         setNextInputFocused()
       }
     }

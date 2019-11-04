@@ -1,3 +1,10 @@
+<a name="v4.7.1"></a>
+## [v4.7.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.7.0...v4.7.1) (2019-11-04)
+
+### Bug Fixes
+- Adds misisng shouldFocus options. ([30593d7](https://github.com/alexseitsinger/react-simple-input/commit/30593d79240cc7faa5ef3dc48a72bfd40c5902b7))
+
+
 <a name="v4.7.0"></a>
 ## [v4.7.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.6.0...v4.7.0) (2019-11-04)
 

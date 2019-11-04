@@ -1,3 +1,10 @@
+<a name="v4.7.0"></a>
+## [v4.7.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.6.0...v4.7.0) (2019-11-04)
+
+### Features
+- Expanded re-focus options. ([2d776a9](https://github.com/alexseitsinger/react-simple-input/commit/2d776a9b28b77397dbc59d3cb849bc994411109f))
+
+
 <a name="v4.6.0"></a>
 ## [v4.6.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.2...v4.6.0) (2019-11-04)
 

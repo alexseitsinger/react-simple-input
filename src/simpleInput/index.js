@@ -27,9 +27,9 @@ import { Container, Input } from "./elements"
  * @param {function} props.onValidate
  * @param {function} props.onSanitize
  * @param {function} props.onDidSanitize
- * @param {function} props.setInputFocused
- * @param {boolean} props.isInputFocused
- * @param {function} props.setInputFocused
+ * @param {function} props.setCurrentInputFocused
+ * @param {boolean} props.isCurrentInputFocused
+ * @param {function} props.setCurrentInputFocused
  * @param {function} props.renderInput
  * @param {function} props.renderError
  * @param {function} props.addValidator
@@ -65,8 +65,11 @@ export class SimpleInput extends React.Component {
     onValidate: PropTypes.func,
     onSanitize: PropTypes.func,
     onDidSanitize: PropTypes.func,
-    setInputFocused: PropTypes.func.isRequired,
-    isInputFocused: PropTypes.bool.isRequired,
+    setCurrentInputFocused: PropTypes.func.isRequired,
+    isCurrentInputFocused: PropTypes.bool.isRequired,
+    setCurrentInputBlurred: PropTypes.func.isRequired,
+    setNextInputFocused: PropTypes.func.isRequired,
+    setLastInputFocused: PropTypes.func.isRequired,
     renderInput: PropTypes.func,
     renderError: PropTypes.func,
     addValidator: PropTypes.func,
@@ -133,22 +136,12 @@ export class SimpleInput extends React.Component {
 
   inputRef = React.createRef()
 
-  meetsMinLength = value => {
-    const { minLength } = this.props
-    if (!minLength) {
-      return true
-    }
-    return value.length >= minLength
-  }
-
-  meetsMaxLength = value => {
-    const { maxLength } = this.props
-    if (!maxLength) {
-      return true
-    }
-    return value.length <= maxLength
-  }
-
+  /**
+   * Returns the current DOM element's value, based on the input type. This
+   * value should not be used directly. Instead, access the current DOM value
+   * through through the getSanitizedValue() method to avoid passing potentially
+   * harmful values.
+   */
   getOriginalValue = () => {
     const { current } = this.inputRef
 
@@ -166,6 +159,12 @@ export class SimpleInput extends React.Component {
     }
   }
 
+  /**
+   * Converts the current DOM elements value into something acceptable for use
+   * by stripping away whitespace, and illegal characters, etc. Will also call
+   * another function onDidSanitize, with the values before and after to allow
+   * for reporting of potential malicious/illegal attempts, etc.
+   */
   getSanitizedValue = () => {
     const originalValue = this.getOriginalValue()
     var sanitizedValue = originalValue
@@ -184,45 +183,108 @@ export class SimpleInput extends React.Component {
     return sanitizedValue
   }
 
-  doesValueHaveData = value => {
-    if (!value) {
-      return false
-    }
-
-    if (_.isString(value) && value.length) {
-      return true
-    }
-    if (_.isArray(value) && value.length) {
-      return true
-    }
-
-    return false
+  /**
+   * Returns true/false if the current DOM element has a value after
+   * sanitization.
+   */
+  hasSanitizedValue = () => {
+    const value = this.getSanitizedValue()
+    return (value.length > 0)
   }
 
-  handleBlur = event => {
-    const { resetValue } = this.props
-    const value = this.getSanitizedValue(event.target)
+  /**
+   * Returns true/false if the current sanitized value meets the minimum length
+   * requirements.
+   */
+  sanitizedValueMeetsMinLength = () => {
+    const { minLength } = this.props
+    if (!minLength) {
+      return true
+    }
+    const value = this.getSanitizedValue()
+    return (value.length >= minLength)
+  }
 
-    if (this.doesValueHaveData(value) === true) {
-      const isValid = this.validate(value)
-      this.handleSetInputValue(value, true)
-      this.handleSetValueValid(isValid, true)
-      this.handleSetInputEmpty(false, true)
+  /**
+   * Returns true/false if the current sanitized value meets the maximum length
+   * requirements.
+   */
+  sanitizedValueMeetsMaxLength = () => {
+    const { maxLength } = this.props
+    if (!maxLength) {
+      return true
+    }
+    const value = this.getSanitizedValue()
+    return  (value.length <= maxLength)
+  }
+
+  /**
+   * Invoked when the DOM element loses focus. When this occurs, set some redux
+   * state, and the force the DOM element to blur after its re-mounted and
+   * updated.
+   */
+  handleInputBlur = event => {
+    const {
+      resetValue,
+      setNextInputFocused,
+    } = this.props
+    const shouldFocus = false
+
+    setNextInputFocused()
+
+    if (this.hasSanitizedValue() === true) {
+      const isValid = this.doesSanitizedValueValidate()
+      this.handleSetInputValue(this.getSanitizedValue(), shouldFocus)
+      this.handleSetValueValid(isValid, shouldFocus)
+      this.handleSetInputEmpty(false, shouldFocus)
     }
     else {
-      this.handleSetInputEmpty(true, false)
-      this.handleSetValueValid(false, false)
-      this.handleSetInputValue(resetValue, false)
+      this.handleSetInputValue(resetValue, shouldFocus)
+      this.handleSetInputEmpty(true, shouldFocus)
+      this.handleSetValueValid(false, shouldFocus)
     }
   }
 
-  handleChange = event => {
-    this.handleSetFormSubmitted(false)
+  /**
+   * When we tab or shift-tab between input elements, the focus may move to an
+   * unexpected element. Therefore, to ensure the correct element gets focused,
+   * toggle the focusedKey on the parent SimpleForm, by invokeing the correct
+   * method provided from it.
+   */
+  handleInputKeyUp = event => {
+    const {
+      setNextInputFocused,
+      setLastInputFocused,
+      setCurrentInputBlurred,
+    } = this.props
+
+    const tabKeyCode = 9
+
+    const isShift = Boolean(event.shiftKey)
+    const keyCode = event.which
+
+    if (keyCode === tabKeyCode) {
+      setCurrentInputBlurred()
+
+      if (isShift) {
+        setLastInputFocused()
+      }
+      else {
+        setNextInputFocused()
+      }
+    }
+  }
+
+  handleInputChange = event => {
+    const { onChange } = this.props
+    // Everytime our DOM element's value changes, we want to set the
+    // isFormSubmitted state to false, to ensure errors disappear, so the input
+    // field is visible, and asy to type into.
+    this.handleSetFormSubmitted(false, false)
 
     // If we get an onChange handler, its probably for a file input field that
     // has a preview image loaded. Therefore, in order to pass the correct value
     // to the input and the redux store, return the methods we use do do this.
-    const { onChange } = this.props
     if (_.isFunction(onChange)) {
       onChange(
         this.getSanitizedValue(event.target),
@@ -234,12 +296,19 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  handleFocus = event => {
+  /**
+   * Invoked when the DOM element gains focus. This only happens when the
+   * currentInputFocused prop, passed from the parent SimpleForm component,
+   * matches the save focusedInput key. SInce prop changes cause this component
+   * to be re-mounted and updated, we need to force the DOM element to be
+   * focused after.
+   */
+  handleInputFocus = event => {
     const shouldFocus = true
     const value = this.getSanitizedValue(event.target)
 
-    if (this.doesValueHaveData(value) === true) {
-      const isValid = this.validate(value)
+    if (this.hasSanitizedValue(value) === true) {
+      const isValid = this.doesSanitizedValueValidate()
       this.handleSetValueValid(isValid, shouldFocus)
       this.handleSetInputEmpty(false, shouldFocus)
     }
@@ -249,58 +318,120 @@ export class SimpleInput extends React.Component {
     }
   }
 
+  /**
+   * Save the current validity state to the redux store, to determine if the
+   * formFieldError should be displayed. Once changes, the DOM focus may need to
+   * be forced back onto this component.
+   */
   handleSetValueValid = (bool, shouldFocus) => {
-    const { isValueValid, setValueValid, setInputFocused } = this.props
+    const {
+      isValueValid,
+      setValueValid,
+      setCurrentInputFocused,
+      setCurrentInputBlurred,
+    } = this.props
 
     if (isValueValid !== bool) {
       if (_.isFunction(setValueValid)) {
         setValueValid(bool)
+
         if (shouldFocus === true) {
-          setInputFocused()
+          setCurrentInputFocused()
+        }
+        else {
+          setCurrentInputBlurred()
         }
       }
     }
   }
 
+  /**
+   * Save the current emptiness state to the redux store to determine if we
+   * should display other things like formFieldErrors, or allow submissions.
+   * Once changed, the DOM focus may need to be forced back onto this component.
+   */
   handleSetInputEmpty = (bool, shouldFocus) => {
-    const { isInputEmpty, setInputEmpty, setInputFocused } = this.props
+    const {
+      isInputEmpty,
+      setInputEmpty,
+      setCurrentInputFocused,
+      setCurrentInputBlurred,
+    } = this.props
 
     if (isInputEmpty !== bool) {
       if (_.isFunction(setInputEmpty)) {
         setInputEmpty(bool)
+
         if (shouldFocus === true) {
-          setInputFocused()
+          setCurrentInputFocused()
+        }
+        else {
+          setCurrentInputBlurred()
         }
       }
     }
   }
 
+  /**
+   * Save the value for the input to the redux store, so it can be displayed
+   * in the current DOm element. Once the change occurs, we may need to force
+   * DOM focus back to this component.
+   */
   handleSetInputValue = (value, shouldFocus) => {
-    const { inputValue, setInputValue, setInputFocused } = this.props
+    const {
+      inputValue,
+      setInputValue,
+      setCurrentInputFocused,
+      setCurrentInputBlurred,
+    } = this.props
 
     if (inputValue !== value) {
       if (_.isFunction(setInputValue)) {
         setInputValue(value)
+
         if (shouldFocus === true) {
-          setInputFocused()
+          setCurrentInputFocused()
+        }
+        else {
+          setCurrentInputBlurred()
         }
       }
     }
   }
 
+  /**
+   * Toggle the redux store's isFormSubmitted state. This is used to determine
+   * if other things happen, like displaying a formFieldError, etc. Once the
+   * state is changed, we may need to force a DOM focus back onto this
+   * component, since it gets remounted from the props change.
+   */
   handleSetFormSubmitted = (bool, shouldFocus) => {
-    const { isFormSubmitted, setFormSubmitted, setInputFocused } = this.props
+    const {
+      isFormSubmitted,
+      setFormSubmitted,
+      setCurrentInputFocused,
+      setCurrentInputBlurred,
+    } = this.props
 
     if (isFormSubmitted !== bool) {
       if (_.isFunction(setFormSubmitted)) {
         setFormSubmitted(bool)
+
         if (shouldFocus === true) {
-          setInputFocused()
+          setCurrentInputFocused()
+        }
+        else {
+          setCurrentInputBlurred()
         }
       }
     }
   }
 
+  /**
+   * Toggle the error message that gets displayed by save the message to the
+   * redux store. Once the form is submitted, the save error message will be
+   * displayed within the input field.
+   */
   handleSetErrorMessage = message => {
     const {
       errorMessage,
@@ -314,7 +445,12 @@ export class SimpleInput extends React.Component {
     }
   }
 
-  validate = () => {
+  /**
+   * Determines if the current sanitized value passes all the requirements for
+   * length, and content, etc. If it does not pass any check, it will display
+   * an error and set the validity to false.
+   */
+  doesSanitizedValueValidate = () => {
     const {
       inputType,
       onValidate,
@@ -327,7 +463,7 @@ export class SimpleInput extends React.Component {
     const value = this.getSanitizedValue()
 
     if (inputType !== "file") {
-      if (this.meetsMinLength(value) === false) {
+      if (this.sanitizedValueMeetsMinLength(value) === false) {
         this.handleSetErrorMessage(
           minLengthErrorMessage
           ? minLengthErrorMessage
@@ -337,7 +473,7 @@ export class SimpleInput extends React.Component {
         return false
       }
 
-      if (this.meetsMaxLength(value) === false) {
+      if (this.sanitizedValueMeetsMaxLength(value) === false) {
         this.handleSetErrorMessage(
           maxLengthErrorMessage
           ? maxLengthErrorMessage
@@ -361,132 +497,132 @@ export class SimpleInput extends React.Component {
     return true
   }
 
-  normalize = value => {
+  /**
+   * Used to format the current inputValue to match the correct format for form
+   * submission.
+   *
+   * Used by evaluate()
+   */
+  getNormalizedValue = () => {
     const {
+      inputValue,
       onNormalize,
     } = this.props
 
-    var normalized = value
+    // Since the value that gets displayed in the browser is the inputValue
+    // prop, we should normalize this value instead of the DOM element's value.
+    var normalizedValue = inputValue
     if (_.isFunction(onNormalize)) {
-      normalized = onNormalize(value)
+      normalizedValue = onNormalize(normalizedValue)
     }
 
-    return normalized
+    return normalizedValue
   }
 
-  check = () => {
+  /**
+   * Checks if the input value is empty.
+   *
+   * Used by SimpleForm when it is submitted.
+   */
+  checkValueForEmptiness = () => {
     const {
-      inputValue,
       onCheck,
     } = this.props
 
     if (_.isFunction(onCheck)) {
-      return onCheck(inputValue)
+      return onCheck(this.getSanitizedValue())
     }
 
-    var result = true
-    if (this.doesValueHaveData(inputValue) === true) {
-      result = false
-    }
+    const result = this.hasSanitizedValue()
 
-    this.handleSetInputEmpty(result)
+    this.handleSetInputEmpty(result, false)
 
     return result
   }
 
+  /**
+   * Returns an object withe field name and normalized value for use in form
+   * submission data objects.
+   *
+   * Used by SimpleForm for each field.
+   */
   evaluate = () => {
-    const { inputName, inputValue, onEvaluate } = this.props
-    const normalized = this.normalize(inputValue)
+    const { current } = this.inputRef
+    const { inputName, onEvaluate } = this.props
+
+    // Normalize the input value to match the format required for the form data
+    // object.
+    const normalizedValued = this.getNormalizedValue()
+
     // When our simple form trys to evaulate any file input fields, it doesnt
-    // obtain any value, since the redux action causes a re-render, which resets
+    // obtain any value, since the redux action causes a re-render, which resetInputValues
     // the file input field's value. Any attempt to set this value using value
     // or defaultValue props results in a DOM error.
     if (_.isFunction(onEvaluate)) {
-      const { current } = this.inputRef
-      return onEvaluate(inputName, normalized, current)
+      return onEvaluate(inputName, normalizedValued, current)
     }
 
     return {
       name: inputName,
-      value: normalized,
+      value: normalizedValued,
     }
   }
 
-  reset = () => {
+  /**
+   * Set the redux inputValue back to its default.
+   *
+   * Used by SimpleForm after form submission is finished.
+   */
+  resetInputValue = () => {
     const { resetValue } = this.props
     const shouldFocus = false
     this.handleSetInputValue(resetValue, shouldFocus)
   }
 
+  /**
+   * Invoked when the FormFieldError is clicked. Since isFormSubmitted
+   * determines if the errors are displayed, we toggle this to false to remove
+   * them when the error is clicked.
+   */
   handleClickError = event => {
-    this.handleSetFormSubmitted(false)
+    this.handleSetFormSubmitted(false, false)
   }
 
-  updateFocus = () => {
-    const { isInputFocused } = this.props
+  /**
+   * Set the actual DOM element to be focused if the current input focused key
+   * matches this field. Tha key is generated by SimpleForm, and passsed to each
+   * simple input field dynamically.
+   */
+  setDOMFocus = () => {
+    const { isCurrentInputFocused, inputName } = this.props
     const { current } = this.inputRef
-    if (isInputFocused === true) {
-      if (current) {
+    if (current) {
+      if (isCurrentInputFocused === true) {
         current.focus()
       }
     }
   }
 
-  renderInput = () => {
-    const {
-      renderInput,
-      inputName,
-      inputType,
-      inputStyle,
-      inputValue,
-      inputPlaceholder,
-      isDisabled,
-    } = this.props
-
-    const key = `${inputType}_input_${inputName}`
-
-    // React throws an error if we try to set defaultValue on file inputs, so
-    // avoid settings it altogether. Also, since file inputs dont have a
-    // placeholder, avoid setting that as well.
-    var rendered
-    const renderProps = {
-      disabled: isDisabled,
-      key: key,
-      css: inputStyle,
-      ref: this.inputRef,
-      name: inputName,
-      type: inputType,
-      onChange: this.handleChange,
-      onFocus: this.handleFocus,
-      onBlur: this.handleBlur,
+  /**
+   * Similar to setDOMFOcus, but for blurring the DOM element.
+   */
+  setDOMBlur =() => {
+    const { isCurrentInputFocused, inputName } = this.props
+    const { current } = this.inputRef
+    if (current) {
+      if (isCurrentInputFocused === false) {
+        current.blur()
+      }
     }
-    if (inputType === "file") {
-      rendered = (
-        <Input {...renderProps} />
-      )
-    }
-    else {
-      rendered = (
-        <Input
-          {...renderProps}
-          defaultValue={inputValue}
-          placeholder={inputPlaceholder}
-        />
-      )
-    }
-
-    if (_.isFunction(renderInput)) {
-      return renderInput(rendered)
-    }
-
-    return rendered
   }
 
+  /**
+   * If we do anything to change the redux store from onClick, then any
+   * onloadend handlers wont work, since the component gets re-mounted before
+   * it completes. Therefore, avoid changing state until focus or blur DOM
+   * events.
+   */
   handleClick = () => {
-    // If we do anything to change the redux store from onClick, then any
-    // onloadend handlers wont work, since the component gets re-mounted before
-    // it completes. Therefore, avoid changing state until focus or blue or
-    // change.
     //this.handleSetFormSubmitted(false, true)
   }
 
@@ -533,6 +669,57 @@ export class SimpleInput extends React.Component {
     return renderedChild
   }
 
+  renderInput = () => {
+    const {
+      renderInput,
+      inputName,
+      inputType,
+      inputStyle,
+      inputValue,
+      inputPlaceholder,
+      isDisabled,
+    } = this.props
+
+    const key = `${inputType}_input_${inputName}`
+
+    // React throws an error if we try to set defaultValue on file inputs, so
+    // avoid settings it altogether. Also, since file inputs dont have a
+    // placeholder, avoid setting that as well.
+    var rendered
+    const renderProps = {
+      disabled: isDisabled,
+      key: key,
+      css: inputStyle,
+      ref: this.inputRef,
+      name: inputName,
+      type: inputType,
+      onKeyUp: this.handleInputKeyUp,
+      onChange: this.handleInputChange,
+      onFocus: this.handleInputFocus,
+      onBlur: this.handleInputBlur,
+    }
+    if (inputType === "file") {
+      rendered = (
+        <Input {...renderProps} />
+      )
+    }
+    else {
+      rendered = (
+        <Input
+          {...renderProps}
+          defaultValue={inputValue}
+          placeholder={inputPlaceholder}
+        />
+      )
+    }
+
+    if (_.isFunction(renderInput)) {
+      return renderInput(rendered)
+    }
+
+    return rendered
+  }
+
   componentDidMount() {
     const {
       addValidator,
@@ -542,33 +729,45 @@ export class SimpleInput extends React.Component {
       onDidMount,
     } = this.props
 
+    // Whenever this component gets mounted, we want to save a reference to
+    // certain methods on the SImpleForm instance, so it can process the fields
+    // when the form gets submitted.
     if (_.isFunction(addValidator)) {
-      addValidator(this.validate)
+      addValidator(this.doesSanitizedValueValidate)
     }
     if (_.isFunction(addResetter)) {
-      addResetter(this.reset)
+      addResetter(this.resetInputValue)
     }
     if (_.isFunction(addEvaluator)) {
       addEvaluator(this.evaluate)
     }
     if (_.isFunction(addChecker)) {
-      addChecker(this.check)
+      addChecker(this.checkValueForEmptiness)
     }
 
-    // Our Picture input field needs to reset the input field outside the normal
-    // flow. Since its a superset of this class, we need to pass the instance
-    // method when this gets mounted so it can use it when its ready.
+    // Our Picture input field needs to resetInputValue the input field outside
+    // the normal flow. Since its a superset of this class, we need to pass the
+    // instance method when this gets mounted so it can use it when its ready.
     if (_.isFunction(onDidMount)) {
       onDidMount(this)
     }
 
-    this.updateFocus()
+    // Each time the props change from our redux store, this component is
+    // remounted. Therefore, in order to maintain focus on the correct element
+    // between input value changes, we need to autoamtically toggle DOM focus
+    // based on the dynamic currentInputFocused prop that gets passed from our
+    // SimpleForm parent component to this one.
+    this.setDOMFocus()
   }
 
   componentDidUpdate(prevProps) {
+    // Everytime our redux store changes props, this componnet gets re-mounted
+    // and updated. When this happens, we may have formFieldErrors displayed. In
+    // order to remove these errors after a change occurs, we need to set
+    // isFormSubmitted back to false.
     const { inputValue } = this.props
     if (prevProps.inputValue !== inputValue) {
-      this.handleSetFormSubmitted(false)
+      this.handleSetFormSubmitted(false, false)
     }
   }
 
@@ -580,17 +779,20 @@ export class SimpleInput extends React.Component {
       removeChecker,
     } = this.props
 
+    // Once this component gets unmounted, we want to remove the references to
+    // the old, stale instance methods on the parent SimpleForm to prevent
+    // memory leaks.
     if (_.isFunction(removeValidator)) {
-      removeValidator(this.validate)
+      removeValidator(this.doesSanitizedValueValidate)
     }
     if (_.isFunction(removeResetter)) {
-      removeResetter(this.reset)
+      removeResetter(this.resetInputValue)
     }
     if (_.isFunction(removeEvaluator)) {
       removeEvaluator(this.evaluate)
     }
     if (_.isFunction(removeChecker)) {
-      removeChecker(this.check)
+      removeChecker(this.checkValueForEmptiness)
     }
   }
 

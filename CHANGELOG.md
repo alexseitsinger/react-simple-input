@@ -1,3 +1,10 @@
+<a name="v4.5.2"></a>
+## [v4.5.2](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.1...v4.5.2) (2019-11-04)
+
+### Bug Fixes
+- Fix checkValueForEmptiness. ([ee396f4](https://github.com/alexseitsinger/react-simple-input/commit/ee396f48970c5ea459df34e6950ac0169daf11d1))
+
+
 <a name="v4.5.1"></a>
 ## [v4.5.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.0...v4.5.1) (2019-11-04)
 

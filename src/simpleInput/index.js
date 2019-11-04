@@ -226,11 +226,8 @@ export class SimpleInput extends React.Component {
   handleInputBlur = event => {
     const {
       resetValue,
-      setNextInputFocused,
     } = this.props
     const shouldFocus = false
-
-    setNextInputFocused()
 
     if (this.hasSanitizedValue() === true) {
       const isValid = this.doesSanitizedValueValidate()
@@ -264,6 +261,7 @@ export class SimpleInput extends React.Component {
     const keyCode = event.which
 
     if (keyCode === tabKeyCode) {
+      this.handleSetFormSubmitted(false, false)
       setCurrentInputBlurred()
 
       if (isShift) {

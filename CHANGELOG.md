@@ -1,3 +1,10 @@
+<a name="v4.5.1"></a>
+## [v4.5.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.0...v4.5.1) (2019-11-04)
+
+### Bug Fixes
+- Updates focus process. ([c0793cf](https://github.com/alexseitsinger/react-simple-input/commit/c0793cf0ac3ff61d3d68feb330e60295f95701e5))
+
+
 <a name="v4.5.0"></a>
 ## [v4.5.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.4.0...v4.5.0) (2019-11-02)
 

@@ -533,7 +533,10 @@ export class SimpleInput extends React.Component {
       return onCheck(this.getSanitizedValue())
     }
 
-    const result = this.hasSanitizedValue()
+    // hasSanitizedValue() reutrns fale if the fied is empty. Since this is
+    // checking for emptiness, we need to use the inverse value fo this check
+    // for the result.
+    const result = !this.hasSanitizedValue()
 
     this.handleSetInputEmpty(result, false)
 

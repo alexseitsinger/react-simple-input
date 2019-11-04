@@ -1,3 +1,10 @@
+<a name="v4.6.0"></a>
+## [v4.6.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.2...v4.6.0) (2019-11-04)
+
+### Features
+- Resets submitted on tab. ([f9d776f](https://github.com/alexseitsinger/react-simple-input/commit/f9d776fa83eb81ed3a05139003e400923c048168))
+
+
 <a name="v4.5.2"></a>
 ## [v4.5.2](https://github.com/alexseitsinger/react-simple-input/compare/v4.5.1...v4.5.2) (2019-11-04)
 

@@ -1,3 +1,10 @@
+<a name="v4.8.0"></a>
+## [v4.8.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.7.1...v4.8.0) (2019-11-05)
+
+### Features
+- Updates. ([5806735](https://github.com/alexseitsinger/react-simple-input/commit/5806735ebcf7abf8e7e6599130cff02c5da679ce))
+
+
 <a name="v4.7.1"></a>
 ## [v4.7.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.7.0...v4.7.1) (2019-11-04)
 

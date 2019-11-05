@@ -146,6 +146,9 @@ export class SimpleInput extends React.Component {
     const { current } = this.inputRef
 
     switch (current.type) {
+      default: {
+        return current.value
+      }
       case "text":
       case "number":
       case "tel":
@@ -169,7 +172,7 @@ export class SimpleInput extends React.Component {
     const originalValue = this.getOriginalValue()
     var sanitizedValue = originalValue
 
-    const { onSanitize, onDidSanitize } = this.props
+    const { inputName, onSanitize, onDidSanitize } = this.props
     if (_.isFunction(onSanitize)) {
       sanitizedValue = onSanitize(originalValue)
     }
@@ -226,21 +229,25 @@ export class SimpleInput extends React.Component {
   handleInputBlur = event => {
     const {
       resetValue,
+      inputName,
     } = this.props
+
     const shouldFocusCurrent = false
     const shouldFocusNext = true
     const shouldFocusLast = false
 
     if (this.hasSanitizedValue() === true) {
+      const sanitizedValue = this.getSanitizedValue()
+      this.handleSetInputValue(sanitizedValue, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
+
       const isValid = this.doesSanitizedValueValidate()
-      this.handleSetInputValue(this.getSanitizedValue(), shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
       this.handleSetValueValid(isValid, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
       this.handleSetInputEmpty(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
     }
     else {
+      this.handleSetInputValue(resetValue, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
       this.handleSetInputEmpty(true, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
       this.handleSetValueValid(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
-      this.handleSetInputValue(resetValue, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
     }
   }
 
@@ -279,10 +286,14 @@ export class SimpleInput extends React.Component {
   }
 
   handleInputChange = event => {
-    const { onChange } = this.props
+    const {
+      onChange,
+    } = this.props
+
     const shouldFocusCurrent = true
     const shouldFocusLast = false
     const shouldFocusNext = false
+
     // Everytime our DOM element's value changes, we want to set the
     // isFormSubmitted state to false, to ensure errors disappear, so the input
     // field is visible, and asy to type into.
@@ -313,6 +324,7 @@ export class SimpleInput extends React.Component {
     const shouldFocusLast = false
     const shouldFocusCurrent = true
     const shouldFocusNext = false
+
     const value = this.getSanitizedValue(event.target)
 
     if (this.hasSanitizedValue(value) === true) {
@@ -564,13 +576,12 @@ export class SimpleInput extends React.Component {
    */
   getNormalizedValue = () => {
     const {
-      inputValue,
       onNormalize,
     } = this.props
 
     // Since the value that gets displayed in the browser is the inputValue
     // prop, we should normalize this value instead of the DOM element's value.
-    var normalizedValue = inputValue
+    var normalizedValue = this.getSanitizedValue()
     if (_.isFunction(onNormalize)) {
       normalizedValue = onNormalize(normalizedValue)
     }
@@ -614,23 +625,26 @@ export class SimpleInput extends React.Component {
    */
   evaluate = () => {
     const { current } = this.inputRef
-    const { inputName, onEvaluate } = this.props
+    const {
+      inputName,
+      onEvaluate,
+    } = this.props
 
     // Normalize the input value to match the format required for the form data
     // object.
-    const normalizedValued = this.getNormalizedValue()
+    const normalizedValue = this.getNormalizedValue()
 
     // When our simple form trys to evaulate any file input fields, it doesnt
     // obtain any value, since the redux action causes a re-render, which resetInputValues
     // the file input field's value. Any attempt to set this value using value
     // or defaultValue props results in a DOM error.
     if (_.isFunction(onEvaluate)) {
-      return onEvaluate(inputName, normalizedValued, current)
+      return onEvaluate(inputName, normalizedValue, current)
     }
 
     return {
       name: inputName,
-      value: normalizedValued,
+      value: normalizedValue,
     }
   }
 
@@ -665,8 +679,12 @@ export class SimpleInput extends React.Component {
    * simple input field dynamically.
    */
   setDOMFocus = () => {
-    const { isCurrentInputFocused, inputName } = this.props
+    const {
+      isCurrentInputFocused,
+    } = this.props
+
     const { current } = this.inputRef
+
     if (current) {
       if (isCurrentInputFocused === true) {
         current.focus()
@@ -836,10 +854,14 @@ export class SimpleInput extends React.Component {
     // and updated. When this happens, we may have formFieldErrors displayed. In
     // order to remove these errors after a change occurs, we need to set
     // isFormSubmitted back to false.
-    const { inputValue } = this.props
+    const {
+      inputValue,
+    } = this.props
+
     const shouldFocusLast = false
     const shouldFocusNext = false
     const shouldFocusCurrent = false
+
     if (prevProps.inputValue !== inputValue) {
       this.handleSetFormSubmitted(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
     }

@@ -1,3 +1,7 @@
+<a name="v4.9.0"></a>
+## [v4.9.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.8.0...v4.9.0) (2019-11-16)
+
+
 <a name="v4.8.0"></a>
 ## [v4.8.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.7.1...v4.8.0) (2019-11-05)
 

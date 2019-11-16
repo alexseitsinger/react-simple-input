@@ -3,6 +3,11 @@ const path = require("path")
 module.exports = {
   root: true,
   parser: "babel-eslint",
+  env: {
+    browser: true,
+    node: true,
+    jest: true,
+  },
   settings: {
     "import/external-module-folders": [
       "node_modules",

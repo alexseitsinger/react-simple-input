@@ -134,6 +134,89 @@ export class SimpleInput extends React.Component {
     onCheck: null,
   }
 
+  componentDidMount() {
+    const {
+      addValidator,
+      addResetter,
+      addEvaluator,
+      addChecker,
+      onDidMount,
+    } = this.props
+
+    // Whenever this component gets mounted, we want to save a reference to
+    // certain methods on the SImpleForm instance, so it can process the fields
+    // when the form gets submitted.
+    if (_.isFunction(addValidator)) {
+      addValidator(this.doesSanitizedValueValidate)
+    }
+    if (_.isFunction(addResetter)) {
+      addResetter(this.resetInputValue)
+    }
+    if (_.isFunction(addEvaluator)) {
+      addEvaluator(this.evaluate)
+    }
+    if (_.isFunction(addChecker)) {
+      addChecker(this.checkValueForEmptiness)
+    }
+
+    // Our Picture input field needs to resetInputValue the input field outside
+    // the normal flow. Since its a superset of this class, we need to pass the
+    // instance method when this gets mounted so it can use it when its ready.
+    if (_.isFunction(onDidMount)) {
+      onDidMount(this)
+    }
+
+    // Each time the props change from our redux store, this component is
+    // remounted. Therefore, in order to maintain focus on the correct element
+    // between input value changes, we need to autoamtically toggle DOM focus
+    // based on the dynamic currentInputFocused prop that gets passed from our
+    // SimpleForm parent component to this one.
+    this.setDOMFocus()
+  }
+
+  componentDidUpdate(prevProps) {
+    // Everytime our redux store changes props, this componnet gets re-mounted
+    // and updated. When this happens, we may have formFieldErrors displayed. In
+    // order to remove these errors after a change occurs, we need to set
+    // isFormSubmitted back to false.
+    const {
+      inputValue,
+    } = this.props
+
+    const shouldFocusLast = false
+    const shouldFocusNext = false
+    const shouldFocusCurrent = false
+
+    if (prevProps.inputValue !== inputValue) {
+      this.handleSetFormSubmitted(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
+    }
+  }
+
+  componentWillUnmount() {
+    const {
+      removeValidator,
+      removeResetter,
+      removeEvaluator,
+      removeChecker,
+    } = this.props
+
+    // Once this component gets unmounted, we want to remove the references to
+    // the old, stale instance methods on the parent SimpleForm to prevent
+    // memory leaks.
+    if (_.isFunction(removeValidator)) {
+      removeValidator(this.doesSanitizedValueValidate)
+    }
+    if (_.isFunction(removeResetter)) {
+      removeResetter(this.resetInputValue)
+    }
+    if (_.isFunction(removeEvaluator)) {
+      removeEvaluator(this.evaluate)
+    }
+    if (_.isFunction(removeChecker)) {
+      removeChecker(this.checkValueForEmptiness)
+    }
+  }
+
   inputRef = React.createRef()
 
   /**
@@ -809,88 +892,6 @@ export class SimpleInput extends React.Component {
     return rendered
   }
 
-  componentDidMount() {
-    const {
-      addValidator,
-      addResetter,
-      addEvaluator,
-      addChecker,
-      onDidMount,
-    } = this.props
-
-    // Whenever this component gets mounted, we want to save a reference to
-    // certain methods on the SImpleForm instance, so it can process the fields
-    // when the form gets submitted.
-    if (_.isFunction(addValidator)) {
-      addValidator(this.doesSanitizedValueValidate)
-    }
-    if (_.isFunction(addResetter)) {
-      addResetter(this.resetInputValue)
-    }
-    if (_.isFunction(addEvaluator)) {
-      addEvaluator(this.evaluate)
-    }
-    if (_.isFunction(addChecker)) {
-      addChecker(this.checkValueForEmptiness)
-    }
-
-    // Our Picture input field needs to resetInputValue the input field outside
-    // the normal flow. Since its a superset of this class, we need to pass the
-    // instance method when this gets mounted so it can use it when its ready.
-    if (_.isFunction(onDidMount)) {
-      onDidMount(this)
-    }
-
-    // Each time the props change from our redux store, this component is
-    // remounted. Therefore, in order to maintain focus on the correct element
-    // between input value changes, we need to autoamtically toggle DOM focus
-    // based on the dynamic currentInputFocused prop that gets passed from our
-    // SimpleForm parent component to this one.
-    this.setDOMFocus()
-  }
-
-  componentDidUpdate(prevProps) {
-    // Everytime our redux store changes props, this componnet gets re-mounted
-    // and updated. When this happens, we may have formFieldErrors displayed. In
-    // order to remove these errors after a change occurs, we need to set
-    // isFormSubmitted back to false.
-    const {
-      inputValue,
-    } = this.props
-
-    const shouldFocusLast = false
-    const shouldFocusNext = false
-    const shouldFocusCurrent = false
-
-    if (prevProps.inputValue !== inputValue) {
-      this.handleSetFormSubmitted(false, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
-    }
-  }
-
-  componentWillUnmount() {
-    const {
-      removeValidator,
-      removeResetter,
-      removeEvaluator,
-      removeChecker,
-    } = this.props
-
-    // Once this component gets unmounted, we want to remove the references to
-    // the old, stale instance methods on the parent SimpleForm to prevent
-    // memory leaks.
-    if (_.isFunction(removeValidator)) {
-      removeValidator(this.doesSanitizedValueValidate)
-    }
-    if (_.isFunction(removeResetter)) {
-      removeResetter(this.resetInputValue)
-    }
-    if (_.isFunction(removeEvaluator)) {
-      removeEvaluator(this.evaluate)
-    }
-    if (_.isFunction(removeChecker)) {
-      removeChecker(this.checkValueForEmptiness)
-    }
-  }
 
   render() {
     const {

@@ -1,3 +1,10 @@
+<a name="v4.10.0"></a>
+## [v4.10.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.9.0...v4.10.0) (2019-11-17)
+
+### Code Refactoring
+- Reorganizes method order. ([f94ef6a](https://github.com/alexseitsinger/react-simple-input/commit/f94ef6ae8772cab74ccdfc39e49ae5209cae03e8))
+
+
 <a name="v4.9.0"></a>
 ## [v4.9.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.8.0...v4.9.0) (2019-11-16)
 

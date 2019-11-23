@@ -6,16 +6,21 @@ module.exports = {
     }],
     "@babel/preset-react",
     ["@emotion/babel-preset-css-prop", {
-      autoLabel: true,
+      autoLabel: (process.env.NODE_ENV !== "production"),
       labelFormat: "[local]",
-      useBuiltIns: false,
-    }]
+    }],
   ],
   plugins: [
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-syntax-export-namespace-from",
     "@babel/plugin-transform-runtime",
-    "babel-plugin-transform-react-remove-prop-types",
     "@babel/plugin-proposal-class-properties"
   ],
+  env: {
+    production: {
+      plugins: [
+        "babel-plugin-transform-react-remove-prop-types",
+      ],
+    },
+  },
 }

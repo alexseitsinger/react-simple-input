@@ -8,6 +8,16 @@ module.exports = {
     node: true,
     jest: true,
   },
+  globals: {
+    document: true,
+    window: true,
+    test: true,
+    it: true,
+    describe: true,
+    expect: true,
+    mount: true,
+    shallow: true,
+  },
   settings: {
     "import/external-module-folders": [
       "node_modules",

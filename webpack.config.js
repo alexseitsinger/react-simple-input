@@ -1,5 +1,6 @@
 const path = require("path")
 const nodeExternals = require("webpack-node-externals")
+const TerserPlugin = require("terser-webpack-plugin")
 
 module.exports = {
   entry: "./src/index.js",
@@ -15,9 +16,24 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        include: [path.resolve("./src")],
         use: "babel-loader",
       },
+    ],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+        sourceMap: false,
+        warnings: false,
+        terserOptions: {
+          output: {
+            comments: false,
+          },
+        },
+      }),
     ],
   },
   externals: [

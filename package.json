@@ -1,7 +1,7 @@
 {
   "name": "@alexseitsinger/react-simple-input",
   "version": "4.10.1",
-  "description": "A simple input with a toggled error message.",
+  "description": "A simple input for a simple form",
   "main": "index.js",
   "homepage": "https://github.com/alexseitsinger/react-simple-input",
   "author": {
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@alexseitsinger/eslint-config-base": "^0.16.0",
     "@alexseitsinger/eslint-config-react": "^0.10.0",
+    "@alexseitsinger/react-simple-form": "^0.1.0",
     "@babel/core": "7.7.2",
     "@babel/plugin-proposal-class-properties": "^7.7.0",
     "@babel/plugin-proposal-export-namespace-from": "7.5.2",
@@ -60,12 +61,13 @@
     "react-dom": "^16.12.0",
     "react-redux": "^7.1.3",
     "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0",
     "webpack": "4.41.2",
     "webpack-cli": "3.3.10",
     "webpack-node-externals": "1.7.2"
   },
   "dependencies": {
-    "@alexseitsinger/form-field-error": "^0.1.0",
+    "@alexseitsinger/react-simple-input-error": "^1.0.1",
     "@babel/runtime-corejs3": "7.7.2",
     "@emotion/core": "^10.0.22",
     "@emotion/styled": "^10.0.23",
@@ -74,12 +76,13 @@
     "underscore": "^1.9.1"
   },
   "peerDependencies": {
-    "react": "16.8.6"
+    "react": "^16.12.0"
   },
   "scripts": {
     "build:development": "./node_modules/.bin/webpack --config=./webpack.config.dev.js",
     "build:production": "./node_modules/.bin/webpack --config=./webpack.config.js",
     "build": "yarn run build:development && yarn run build:production",
-    "test": "./node_modules/.bin/jest"
+    "test": "./node_modules/.bin/jest --noStackTrace",
+    "test:watch": "./node_modules/.bin/jest --noStackTrace --watchAll"
   }
 }

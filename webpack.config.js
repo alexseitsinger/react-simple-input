@@ -27,8 +27,8 @@ module.exports = {
       new TerserPlugin({
         extractComments: false,
         sourceMap: false,
-        warnings: false,
         terserOptions: {
+          warnings: false,
           output: {
             comments: false,
           },

@@ -1,3 +1,11 @@
+<a name="v4.11.0"></a>
+## [v4.11.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.10.1...v4.11.0) (2019-11-24)
+
+### Code Refactoring
+- Renames src dir. ([88e76a6](https://github.com/alexseitsinger/react-simple-input/commit/88e76a6faacf0ad4c3364d25a5600bc41a6f84b1))
+- Replaces old package for error message. ([cdfd8b8](https://github.com/alexseitsinger/react-simple-input/commit/cdfd8b8340524f878855f60d740d31fc7dce2427))
+
+
 <a name="v4.10.1"></a>
 ## [v4.10.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.10.0...v4.10.1) (2019-11-17)
 

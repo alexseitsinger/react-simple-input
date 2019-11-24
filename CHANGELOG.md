@@ -1,3 +1,13 @@
+<a name="v4.11.2"></a>
+## [v4.11.2](https://github.com/alexseitsinger/react-simple-input/compare/v4.11.1...v4.11.2) (2019-11-24)
+
+### Bug Fixes
+- Fixes proptype defs. ([1424dc7](https://github.com/alexseitsinger/react-simple-input/commit/1424dc74d2883ca31f100b1b57155dcfae9d0457))
+
+### Code Refactoring
+- Removes core-js. ([1f9fb7f](https://github.com/alexseitsinger/react-simple-input/commit/1f9fb7f72a2d13d9e35e71deed5d56c6c4ea1526))
+
+
 <a name="v4.11.1"></a>
 ## [v4.11.1](https://github.com/alexseitsinger/react-simple-input/compare/v4.11.0...v4.11.1) (2019-11-24)
 

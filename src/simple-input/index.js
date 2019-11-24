@@ -1,52 +1,14 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { SimpleInputError } from "@alexseitsinger/react-simple-input-error"
-import _ from "underscore"
+import { isFunction, uniqueId } from "underscore"
 
 import { Container, Input } from "./elements"
 
-/**
- * A simple input for a simple form.
- *
- * @param {object} props
- * @param {boolean} props.isFormSubmitted
- * @param {function} props.setFormSubmitted
- * @param {string} props.errorMessage
- * @param {object} props.errorStyle
- * @param {object} props.inputStyle
- * @param {string} props.inputPlaceholder
- * @param {string|number|object} props.inputValue
- * @param {function} props.setInputValue
- * @param {boolean} props.isInputEmpty
- * @param {function} props.setInputEmpty
- * @param {string} props.inputType
- * @param {string} props.inputName
- * @param {object} props.containerStyle
- * @param {function} props.setInputValueValid
- * @param {boolean} props.isInputValueValid
- * @param {function} props.onValidate
- * @param {function} props.onSanitize
- * @param {function} props.onDidSanitize
- * @param {function} props.setCurrentInputFocused
- * @param {boolean} props.isCurrentInputFocused
- * @param {function} props.setCurrentInputFocused
- * @param {function} props.renderInput
- * @param {function} props.renderError
- * @param {function} props.addValidator
- * @param {function} props.removeValidator
- * @param {function} props.addResetter
- * @param {function} props.removeResetter
- * @param {function} props.resetValue
- * @param {function} props.setEvaluator
- * @param {function} props.removeEvaluator
- * @param {function} props.addChecker
- * @param {function} props.removeChecker
- * @param {function} props.onCheck
- */
 export class SimpleInput extends React.Component {
   static propTypes = {
-    isFormSubmitted: PropTypes.bool.isRequired,
-    setFormSubmitted: PropTypes.func.isRequired,
+    isFormSubmitted: PropTypes.bool,
+    setFormSubmitted: PropTypes.func,
     errorMessage: PropTypes.string.isRequired,
     setErrorMessage: PropTypes.func.isRequired,
     errorPosition: PropTypes.string,
@@ -65,11 +27,12 @@ export class SimpleInput extends React.Component {
     onValidate: PropTypes.func,
     onSanitize: PropTypes.func,
     onDidSanitize: PropTypes.func,
-    setCurrentInputFocused: PropTypes.func.isRequired,
-    isCurrentInputFocused: PropTypes.bool.isRequired,
-    setCurrentInputBlurred: PropTypes.func.isRequired,
-    setNextInputFocused: PropTypes.func.isRequired,
-    setLastInputFocused: PropTypes.func.isRequired,
+    isCurrentInputFocused: PropTypes.bool,
+    setCurrentInputFocused: PropTypes.func,
+    isCurrentInputBlurred: PropTypes.bool,
+    setCurrentInputBlurred: PropTypes.func,
+    setNextInputFocused: PropTypes.func,
+    setLastInputFocused: PropTypes.func,
     renderInput: PropTypes.func,
     renderError: PropTypes.func,
     addValidator: PropTypes.func,
@@ -98,6 +61,14 @@ export class SimpleInput extends React.Component {
   }
 
   static defaultProps = {
+    isFormSubmitted: false,
+    setFormSubmitted: () => {},
+    setCurrentInputFocused: () => {},
+    isCurrentInputFocused: false,
+    isCurrentInputBlurred: false,
+    setCurrentInputBlurred: () => {},
+    setNextInputFocused: () => {},
+    setLastInputFocused: () => {},
     inputEmptyErrorMessage: null,
     onDidMount: null,
     isDisabled: false,
@@ -111,7 +82,7 @@ export class SimpleInput extends React.Component {
     inputPlaceholder: "",
     inputType: "text",
     inputStyle: {},
-    inputName: _.uniqueId(),
+    inputName: uniqueId(),
     errorStyle: {},
     errorPosition: "centerLeft",
     containerStyle: {},
@@ -146,23 +117,23 @@ export class SimpleInput extends React.Component {
     // Whenever this component gets mounted, we want to save a reference to
     // certain methods on the SImpleForm instance, so it can process the fields
     // when the form gets submitted.
-    if (_.isFunction(addValidator)) {
+    if (isFunction(addValidator)) {
       addValidator(this.doesSanitizedValueValidate)
     }
-    if (_.isFunction(addResetter)) {
+    if (isFunction(addResetter)) {
       addResetter(this.resetInputValue)
     }
-    if (_.isFunction(addEvaluator)) {
+    if (isFunction(addEvaluator)) {
       addEvaluator(this.evaluate)
     }
-    if (_.isFunction(addChecker)) {
+    if (isFunction(addChecker)) {
       addChecker(this.checkValueForEmptiness)
     }
 
     // Our Picture input field needs to resetInputValue the input field outside
     // the normal flow. Since its a superset of this class, we need to pass the
     // instance method when this gets mounted so it can use it when its ready.
-    if (_.isFunction(onDidMount)) {
+    if (isFunction(onDidMount)) {
       onDidMount(this)
     }
 
@@ -203,16 +174,16 @@ export class SimpleInput extends React.Component {
     // Once this component gets unmounted, we want to remove the references to
     // the old, stale instance methods on the parent SimpleForm to prevent
     // memory leaks.
-    if (_.isFunction(removeValidator)) {
+    if (isFunction(removeValidator)) {
       removeValidator(this.doesSanitizedValueValidate)
     }
-    if (_.isFunction(removeResetter)) {
+    if (isFunction(removeResetter)) {
       removeResetter(this.resetInputValue)
     }
-    if (_.isFunction(removeEvaluator)) {
+    if (isFunction(removeEvaluator)) {
       removeEvaluator(this.evaluate)
     }
-    if (_.isFunction(removeChecker)) {
+    if (isFunction(removeChecker)) {
       removeChecker(this.checkValueForEmptiness)
     }
   }
@@ -256,12 +227,12 @@ export class SimpleInput extends React.Component {
     var sanitizedValue = originalValue
 
     const { inputName, onSanitize, onDidSanitize } = this.props
-    if (_.isFunction(onSanitize)) {
+    if (isFunction(onSanitize)) {
       sanitizedValue = onSanitize(originalValue)
     }
 
     if (originalValue !== sanitizedValue) {
-      if (_.isFunction(onDidSanitize)) {
+      if (isFunction(onDidSanitize)) {
         onDidSanitize(originalValue, sanitizedValue)
       }
     }
@@ -385,7 +356,7 @@ export class SimpleInput extends React.Component {
     // If we get an onChange handler, its probably for a file input field that
     // has a preview image loaded. Therefore, in order to pass the correct value
     // to the input and the redux store, return the methods we use do do this.
-    if (_.isFunction(onChange)) {
+    if (isFunction(onChange)) {
       onChange(
         this.getSanitizedValue(event.target),
         this.handleSetFormSubmitted,
@@ -437,7 +408,7 @@ export class SimpleInput extends React.Component {
     } = this.props
 
     if (isValueValid !== bool) {
-      if (_.isFunction(setValueValid)) {
+      if (isFunction(setValueValid)) {
         setValueValid(bool)
 
         if (shouldFocusLast === true) {
@@ -472,7 +443,7 @@ export class SimpleInput extends React.Component {
     } = this.props
 
     if (isInputEmpty !== bool) {
-      if (_.isFunction(setInputEmpty)) {
+      if (isFunction(setInputEmpty)) {
         setInputEmpty(bool)
 
         if (shouldFocusLast === true) {
@@ -507,7 +478,7 @@ export class SimpleInput extends React.Component {
     } = this.props
 
     if (inputValue !== value) {
-      if (_.isFunction(setInputValue)) {
+      if (isFunction(setInputValue)) {
         setInputValue(value)
 
         if (shouldFocusLast === true) {
@@ -543,7 +514,7 @@ export class SimpleInput extends React.Component {
     } = this.props
 
     if (isFormSubmitted !== bool) {
-      if (_.isFunction(setFormSubmitted)) {
+      if (isFunction(setFormSubmitted)) {
         setFormSubmitted(bool)
 
         if (shouldFocusLast === true) {
@@ -578,7 +549,7 @@ export class SimpleInput extends React.Component {
     } = this.props
 
     if (errorMessage !== message) {
-      if (_.isFunction(setErrorMessage)) {
+      if (isFunction(setErrorMessage)) {
         setErrorMessage(message)
 
         if (shouldFocusLast === true) {
@@ -638,7 +609,7 @@ export class SimpleInput extends React.Component {
       }
     }
 
-    if (_.isFunction(onValidate)) {
+    if (isFunction(onValidate)) {
       const message = onValidate(value)
       if (message) {
         this.handleSetErrorMessage(message, shouldFocusLast, shouldFocusCurrent, shouldFocusNext)
@@ -665,7 +636,7 @@ export class SimpleInput extends React.Component {
     // Since the value that gets displayed in the browser is the inputValue
     // prop, we should normalize this value instead of the DOM element's value.
     var normalizedValue = this.getSanitizedValue()
-    if (_.isFunction(onNormalize)) {
+    if (isFunction(onNormalize)) {
       normalizedValue = onNormalize(normalizedValue)
     }
 
@@ -686,7 +657,7 @@ export class SimpleInput extends React.Component {
     const shouldFocusCurrent = false
     const shouldFocusNext = false
 
-    if (_.isFunction(onCheck)) {
+    if (isFunction(onCheck)) {
       return onCheck(this.getSanitizedValue())
     }
 
@@ -721,7 +692,7 @@ export class SimpleInput extends React.Component {
     // obtain any value, since the redux action causes a re-render, which
     // resetInputValues the file input field's value. Any attempt to set this
     // value using value or defaultValue props results in a DOM error.
-    if (_.isFunction(onEvaluate)) {
+    if (isFunction(onEvaluate)) {
       return onEvaluate(inputName, normalizedValue, current)
     }
 
@@ -834,7 +805,7 @@ export class SimpleInput extends React.Component {
       />
     )
 
-    if (_.isFunction(renderError)) {
+    if (isFunction(renderError)) {
       return renderError(renderedChild)
     }
 
@@ -885,7 +856,7 @@ export class SimpleInput extends React.Component {
       )
     }
 
-    if (_.isFunction(renderInput)) {
+    if (isFunction(renderInput)) {
       return renderInput(rendered)
     }
 

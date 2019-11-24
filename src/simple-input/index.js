@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import FormFieldError from "@alexseitsinger/form-field-error"
+import { SimpleInputError } from "@alexseitsinger/react-simple-input-error"
 import _ from "underscore"
 
 import { Container, Input } from "./elements"
@@ -301,7 +301,7 @@ export class SimpleInput extends React.Component {
       return true
     }
     const value = this.getSanitizedValue()
-    return  (value.length <= maxLength)
+    return (value.length <= maxLength)
   }
 
   /**
@@ -718,9 +718,9 @@ export class SimpleInput extends React.Component {
     const normalizedValue = this.getNormalizedValue()
 
     // When our simple form trys to evaulate any file input fields, it doesnt
-    // obtain any value, since the redux action causes a re-render, which resetInputValues
-    // the file input field's value. Any attempt to set this value using value
-    // or defaultValue props results in a DOM error.
+    // obtain any value, since the redux action causes a re-render, which
+    // resetInputValues the file input field's value. Any attempt to set this
+    // value using value or defaultValue props results in a DOM error.
     if (_.isFunction(onEvaluate)) {
       return onEvaluate(inputName, normalizedValue, current)
     }
@@ -745,7 +745,7 @@ export class SimpleInput extends React.Component {
   }
 
   /**
-   * Invoked when the FormFieldError is clicked. Since isFormSubmitted
+   * Invoked when the SimpleInputError is clicked. Since isFormSubmitted
    * determines if the errors are displayed, we toggle this to false to remove
    * them when the error is clicked.
    */
@@ -825,11 +825,11 @@ export class SimpleInput extends React.Component {
     }
 
     const renderedChild = (
-      <FormFieldError
+      <SimpleInputError
         isVisible={isErrorVisible}
         position={errorPosition}
         onClick={this.handleClickError}
-        text={finalErrorMessage}
+        message={finalErrorMessage}
         containerStyle={errorStyle}
       />
     )
@@ -891,7 +891,6 @@ export class SimpleInput extends React.Component {
 
     return rendered
   }
-
 
   render() {
     const {

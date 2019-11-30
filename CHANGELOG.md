@@ -1,3 +1,10 @@
+<a name="v4.11.3"></a>
+## [v4.11.3](https://github.com/alexseitsinger/react-simple-input/compare/v4.11.2...v4.11.3) (2019-11-30)
+
+### Bug Fixes
+- Fixes missing ref element. ([8006d96](https://github.com/alexseitsinger/react-simple-input/commit/8006d96fccabe685d66b2908fe00dd02c064ee20))
+
+
 <a name="v4.11.2"></a>
 ## [v4.11.2](https://github.com/alexseitsinger/react-simple-input/compare/v4.11.1...v4.11.2) (2019-11-24)
 

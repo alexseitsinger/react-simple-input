@@ -198,7 +198,9 @@ export class SimpleInput extends React.Component {
    */
   getOriginalValue = () => {
     const { current } = this.inputRef
-
+    if (!current) {
+      return
+    }
     switch (current.type) {
       default: {
         return current.value

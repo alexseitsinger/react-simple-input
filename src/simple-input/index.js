@@ -5,6 +5,95 @@ import { isFunction, uniqueId } from "underscore"
 
 import { Container, Input } from "./elements"
 
+const inputPropsShape = PropTypes.shape({
+  accept: PropTypes.oneOf([
+    "audio/*",
+    "video/*",
+    "image/*",
+  ]),
+  alt: PropTypes.string,
+  autocomplete: PropTypes.oneOf([
+    "on",
+    "off",
+  ]),
+  autofocus: PropTypes.oneOf(["autofocus"]),
+  checked: PropTypes.oneOf(["checked"]),
+  dirname: PropTypes.string,
+  disabled: PropTypes.oneOf(["disabled"]),
+  form: PropTypes.string,
+  formaction: PropTypes.string,
+  formenctype: PropTypes.oneOf([
+    "application/x-www-form-urlencoded",
+    "multipart/form-data",
+    "text/plain",
+  ]),
+  formmethod: PropTypes.oneOf([
+    "get",
+    "post",
+  ]),
+  formnovalidate: PropTypes.oneOf([
+    "formnovalidate",
+  ]),
+  formtarget: PropTypes.oneOf([
+    "_blank",
+    "_self",
+    "_parent",
+    "_top",
+  ]),
+  height: PropTypes.number,
+  list: PropTypes.string,
+  max: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
+  maxlength: PropTypes.number,
+  min: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string,
+  ]),
+  multiple: PropTypes.oneOf([
+    "multiple",
+  ]),
+  name: PropTypes.string,
+  pattern: PropTypes.string,
+  placeholder: PropTypes.string,
+  readonly: PropTypes.oneOf([
+    "readonly",
+  ]),
+  required: PropTypes.oneOf([
+    "required",
+  ]),
+  size: PropTypes.number,
+  src: PropTypes.string,
+  step: PropTypes.number,
+  type: PropTypes.oneOf([
+    "button",
+    "checkbox",
+    "color",
+    "date",
+    "datetime-local",
+    "email",
+    "file",
+    "hidden",
+    "image",
+    "month",
+    "number",
+    "password",
+    "radio",
+    "range",
+    "reset",
+    "search",
+    "submit",
+    "tel",
+    "text",
+    "time",
+    "url",
+    "week",
+  ]),
+  value: PropTypes.string,
+  width: PropTypes.number,
+})
+
 export class SimpleInput extends React.Component {
   static propTypes = {
     isFormSubmitted: PropTypes.bool,
@@ -58,9 +147,11 @@ export class SimpleInput extends React.Component {
     isDisabled: PropTypes.bool,
     onDidMount: PropTypes.func,
     inputEmptyErrorMessage: PropTypes.string,
+    inputProps: inputPropsShape,
   }
 
   static defaultProps = {
+    inputProps: {},
     isFormSubmitted: false,
     setFormSubmitted: () => {},
     setCurrentInputFocused: () => {},
@@ -823,6 +914,7 @@ export class SimpleInput extends React.Component {
       inputValue,
       inputPlaceholder,
       isDisabled,
+      inputProps,
     } = this.props
 
     const key = `${inputType}_input_${inputName}`
@@ -845,7 +937,7 @@ export class SimpleInput extends React.Component {
     }
     if (inputType === "file") {
       rendered = (
-        <Input {...renderProps} />
+        <Input {...renderProps} {...inputProps} />
       )
     }
     else {
@@ -854,6 +946,7 @@ export class SimpleInput extends React.Component {
           {...renderProps}
           defaultValue={inputValue}
           placeholder={inputPlaceholder}
+          {...inputProps}
         />
       )
     }

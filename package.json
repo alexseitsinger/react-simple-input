@@ -1,6 +1,6 @@
 {
   "name": "@alexseitsinger/react-simple-input",
-  "version": "4.12.0",
+  "version": "4.13.0",
   "description": "A simple input for a simple form",
   "main": "index.js",
   "homepage": "https://github.com/alexseitsinger/react-simple-input",

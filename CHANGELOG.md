@@ -1,3 +1,10 @@
+<a name="v4.13.0"></a>
+## [v4.13.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.12.0...v4.13.0) (2019-12-07)
+
+### Features
+- Adds default inputProps. ([a78eaf8](https://github.com/alexseitsinger/react-simple-input/commit/a78eaf80d7de0c8c555ab21e1ac50e8531f2ec17))
+
+
 <a name="v4.12.0"></a>
 ## [v4.12.0](https://github.com/alexseitsinger/react-simple-input/compare/v4.11.3...v4.12.0) (2019-12-07)
 

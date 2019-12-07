@@ -915,6 +915,7 @@ export class SimpleInput extends React.Component {
       inputPlaceholder,
       isDisabled,
       inputProps,
+      maxLength,
     } = this.props
 
     const key = `${inputType}_input_${inputName}`
@@ -943,9 +944,11 @@ export class SimpleInput extends React.Component {
     else {
       rendered = (
         <Input
-          {...renderProps}
           defaultValue={inputValue}
           placeholder={inputPlaceholder}
+          maxLength={maxLength}
+          autoComplete={"off"}
+          {...renderProps}
           {...inputProps}
         />
       )
